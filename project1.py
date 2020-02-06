@@ -2,6 +2,7 @@
 
 import numpy as np
 #hhhhhhhhhhhh
+#tttt
 def read_fasta_file(filename):
     for record in SeqIO.parse(filename, "fasta"):  
         return record
