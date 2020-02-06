@@ -71,17 +71,18 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
 
 #Question 1
 #String A and B
-string_A = "AATAAT"
-string_B = "AAGG"
+#string_A = "AATAAT"
+#string_B = "AAGG"
 t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
-print(t[len(string_A) - 1, len(string_B) - 1])
+#print(t[len(string_A) - 1, len(string_B) - 1])
 #Optimal alignment: 10
 
 
 #Question 2
-#fasta1 = read_fasta_file("seq1.fasta")
-#fasta2 = read_fasta_file("seq2.fasta")
-#print(cost_of_optimal_alignment(sub_matrix, gap_cost, fasta1.seq, fasta2.seq))
+fasta1 = read_fasta_file("seq1.fasta")
+fasta2 = read_fasta_file("seq2.fasta")
+t2 = calculate_alignment_matrix(sub_matrix, gap_cost, fasta1.seq, fasta2.seq)
+print(t2[len(fasta1.seq) - 1, len(fasta1.seq) -1])
 #Optimal alignment: 1336
 
 # Question 3
