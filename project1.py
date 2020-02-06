@@ -54,13 +54,13 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     cell = T[i, j]
     #diagonal cell - substitution
     if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i]][str_B[j]]):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A += str_A[i], res_str_B += str_B[j], i-1, j-1)
+        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i] , res_str_B + str_B[j], i-1, j-1)
     #upper cell - insertion    
     elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A += "-", res_str_B += str_B[j],  i-1, j)
+        backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j],  i-1, j)
     #left cell - deletion
     elif (i >= 0 and j > 0 and cell == T[i, j-1]):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A += str_A[j], res_str_B += "-", i, j-1)
+        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[j], res_str_B + "-", i, j-1)
     elif (i==0 and j==0):
         x = open("alignment.fa","w")
         x.write(res_str_A + "/n" + res_str_B)
