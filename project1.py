@@ -74,7 +74,7 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
 string_A = "AATAAT"
 string_B = "AAGG"
 t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
-print(t[len(str_A) - 1, len(str_B) - 1])
+print(t[len(string_A) - 1, len(string_B) - 1])
 #Optimal alignment: 10
 
 
