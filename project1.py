@@ -18,7 +18,7 @@ sub_matrix = {"A": {"A": 10, "C": 2, "G": 5, "T": 2},
 gap_cost = -5
 
 #Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
-def cost_of_optimal_alignment(sm, gc, str_A, str_B):
+def calculate_alignment_matrix(sm, gc, str_A, str_B):
     #create array with None values
     T = np.full((len(str_A), len(str_B)), None)
     #iterate through rows
@@ -26,7 +26,7 @@ def cost_of_optimal_alignment(sm, gc, str_A, str_B):
         #iterate through columns
         for j in range(0, len(str_B)):
             T[i,j] = calc_cost(i, j, T, str_A, str_B, sm, gc)
-    return T[len(str_A) - 1, len(str_B) - 1]
+    return T
 
 #Calculate cost of one cell
 def calc_cost(i, j, T, str_A, str_B, sm, gc):
@@ -71,17 +71,22 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
 
 #Question 1
 #String A and B
-#string_A = "AATAAT"
-#string_B = "AAGG"
-#print(cost_of_optimal_alignment(sub_matrix, gap_cost, string_A, string_B))
+string_A = "AATAAT"
+string_B = "AAGG"
+t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
+print(t[len(str_A) - 1, len(str_B) - 1])
 #Optimal alignment: 10
 
 
 #Question 2
-fasta1 = read_fasta_file("seq1.fasta")
-fasta2 = read_fasta_file("seq2.fasta")
-print(cost_of_optimal_alignment(sub_matrix, gap_cost, fasta1.seq, fasta2.seq))
+#fasta1 = read_fasta_file("seq1.fasta")
+#fasta2 = read_fasta_file("seq2.fasta")
+#print(cost_of_optimal_alignment(sub_matrix, gap_cost, fasta1.seq, fasta2.seq))
 #Optimal alignment: 1336
+
+# Question 3
+#T = calculate_alignment_matrix()
+#backtrack()
 
 
  
