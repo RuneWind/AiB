@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-#hh
+#hhhhhhh
 def read_fasta_file(filename):
     for record in SeqIO.parse(filename, "fasta"):  
         return record
