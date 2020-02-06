@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from Bio import SeqIO
 
 def read_fasta_file(filename):
     for record in SeqIO.parse(filename, "fasta"):  
@@ -72,7 +73,7 @@ def backtrack(T, str_A, str_B, sm, gc, i, j):
         x = open("alignment.fa","w")
         x.write(res_str_A , "/n" , res_str_B)
         x.close()
-        
+
         
         
 
