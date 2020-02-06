@@ -53,17 +53,17 @@ res_str_B = ""
 #last cell: T[len(str_A) - 1, len(str_B) - 1]
 def backtrack(T, str_A, str_B, sm, gc, i, j):
     cell = T[i, j]
-    #diagonal cell
+    #diagonal cell - substitution
     if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i]][str_B[j]]):
         res_str_A += str_A[i]
         res_str_B += str_B[j]
         backtrack(T, str_A, str_B, sm, gc, i-1, j-1)
-    #upper cell    
+    #upper cell - insertion    
     elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
         res_str_A += "-"
         res_str_B += str_B[j]
         backtrack(T, str_A, str_B, sm, gc, i-1, j)
-    #left cell
+    #left cell - deletion
     elif (i >= 0 and j > 0 and cell == T[i, j-1]):
         res_str_A += str_A[j]
         res_str_B += "-"
