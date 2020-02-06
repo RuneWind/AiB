@@ -70,7 +70,7 @@ def backtrack(T, str_A, str_B, sm, gc, i, j):
         backtrack(T, str_A, str_B, sm, gc, i, j-1)
     elif (i==0 and j==0):
         x = open("alignment.fa","w")
-        x.write(res_str_A , "/n" , res_str_B)
+        x.write(res_str_A + "/n" + res_str_B)
         x.close()
         
         
