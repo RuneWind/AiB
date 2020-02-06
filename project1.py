@@ -62,17 +62,19 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     elif (i >= 0 and j > 0 and cell == T[i, j-1]):
         backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[j], res_str_B + "-", i, j-1)
     elif (i==0 and j==0):
-        x = open("alignment.fa","w")
-        x.write(res_str_A + "/n" + res_str_B)
-        x.close()
+        print("HALLOOOOO!")
+        print(res_str_A + "\n" + res_str_B)
+        #x = open("alignment.fasta", "w")
+        #x.write(res_str_A + "/n" + res_str_B)
+        #x.close()
 
         
         
 
 #Question 1
 #String A and B
-#string_A = "AATAAT"
-#string_B = "AAGG"
+string_A = "AATAAT"
+string_B = "AAGG"
 t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
 #print(t[len(string_A) - 1, len(string_B) - 1])
 #Optimal alignment: 10
@@ -82,12 +84,12 @@ t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
 fasta1 = read_fasta_file("seq1.fasta")
 fasta2 = read_fasta_file("seq2.fasta")
 t2 = calculate_alignment_matrix(sub_matrix, gap_cost, fasta1.seq, fasta2.seq)
-print(t2[len(fasta1.seq) - 1, len(fasta1.seq) -1])
+#print(t2[len(fasta1.seq) - 1, len(fasta1.seq) -1])
 #Optimal alignment: 1336
 
 # Question 3
-#T = calculate_alignment_matrix()
-#backtrack()
+backtrack(t, string_A, string_B, sub_matrix, gap_cost, "", "", len(string_A) - 1, len(string_B) - 1)
+#backtrack(t2, fasta1.seq, fasta2.seq, sub_matrix, gap_cost, "", "", len(fasta1.seq) - 1, len(fasta2.seq) - 1)
 
 
  
