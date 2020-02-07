@@ -78,7 +78,7 @@ string_B = "AAGG"
 t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
 #print(t)
 #print(t[len(string_A), len(string_B)])
-#Optimal alignment: 20
+#Optimal alignment cost is 20
 
 
 #Question 2
@@ -87,12 +87,12 @@ fasta2 = read_fasta_file("seq2.fasta")
 t2 = calculate_alignment_matrix(sub_matrix, gap_cost, fasta1.seq, fasta2.seq)
 #print(t2)
 #print(t2[len(fasta1.seq), len(fasta1.seq)])
-#Optimal alignment: 1346
+#Optimal alignment cost is 1346
 
 # Question 3
 #backtrack(t, string_A, string_B, sub_matrix, gap_cost, "", "", len(string_A), len(string_B))
 #backtrack(t2, fasta1.seq, fasta2.seq, sub_matrix, gap_cost, "", "", len(fasta1.seq), len(fasta2.seq))
-
+#Optimal alignment is written to the file "alignment.fasta"
 
  
 
