@@ -52,7 +52,7 @@ def calc_cost(i, j, T, str_A, str_B, sm, gc):
 #last cell: T[len(str_A) - 1, len(str_B) - 1]
 def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     cell = T[i, j]
-    print("i: " + str(i) + " j:" + str(j))
+    #print("i: " + str(i) + " j:" + str(j))
     #diagonal cell - substitution
     if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]):
         backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1] , res_str_B + str_B[j-1], i-1, j-1)
@@ -60,10 +60,10 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
         backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1], res_str_B + "-",  i-1, j)
     #left cell - deletion
-    elif (i >= 0 and j > 0 and cell == T[i, j-1]):
+    elif (i >= 0 and j > 0 and cell == T[i, j-1] + gc):
         backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
     elif (i==0 and j==0):
-        print(res_str_A[::-1] + "\n" + res_str_B[::-1])
+        #print(res_str_A[::-1] + "\n" + res_str_B[::-1])
         x = open("alignment.fasta", "w")
         x.write(res_str_A[::-1] + "\n" + res_str_B[::-1])
         x.close()
