@@ -77,8 +77,8 @@ string_A = "AATAAT"
 string_B = "AAGG"
 t = calculate_alignment_matrix(sub_matrix, gap_cost, string_A, string_B)
 #print(t)
-#print(t[len(string_A) - 1, len(string_B) - 1])
-#Optimal alignment: 10
+#print(t[len(string_A), len(string_B)])
+#Optimal alignment: 20
 
 
 #Question 2
@@ -86,12 +86,12 @@ fasta1 = read_fasta_file("seq1.fasta")
 fasta2 = read_fasta_file("seq2.fasta")
 t2 = calculate_alignment_matrix(sub_matrix, gap_cost, fasta1.seq, fasta2.seq)
 #print(t2)
-#print(t2[len(fasta1.seq) - 1, len(fasta1.seq) -1])
-#Optimal alignment: 1336
+#print(t2[len(fasta1.seq), len(fasta1.seq)])
+#Optimal alignment: 1346
 
 # Question 3
 #backtrack(t, string_A, string_B, sub_matrix, gap_cost, "", "", len(string_A), len(string_B))
-backtrack(t2, fasta1.seq, fasta2.seq, sub_matrix, gap_cost, "", "", len(fasta1.seq), len(fasta2.seq))
+#backtrack(t2, fasta1.seq, fasta2.seq, sub_matrix, gap_cost, "", "", len(fasta1.seq), len(fasta2.seq))
 
 
  
