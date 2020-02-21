@@ -2,6 +2,7 @@
 
 import numpy as np
 from Bio import SeqIO
+import sys 
 
 def read_fasta_file(filename):
     for record in SeqIO.parse(filename, "fasta"):  
@@ -19,6 +20,9 @@ sub_matrix = {"A": {"A": 10, "C": 2, "G": 5, "T": 2},
            "T": {"A": 2, "C": 5, "G": 2, "T": 10}}
 gap_cost = -5
 '''
+
+sub_matrix = sys.argv[1]
+gap_cost = sys.argv[2]
 
 
 #Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
