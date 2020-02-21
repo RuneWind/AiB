@@ -3,6 +3,8 @@
 import numpy as np
 from Bio import SeqIO
 import sys 
+import time
+import seaborn as sns
 
 def read_fasta_file(filename):
     for record in SeqIO.parse(filename, "fasta"):  
@@ -158,6 +160,10 @@ def backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A, res_str_B, i, j)
         x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
         x.close()
 
+
+
+
+
 #Question 1 (optimal alignment of short sequences)
 #String A and B
 #string_A = "AATAAT"
@@ -204,12 +210,32 @@ str_A = read_fasta_file(sys.argv[4]).seq.upper()
 str_B = read_fasta_file(sys.argv[5]).seq.upper()
 
 
-t3, p3, d3, i3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
-print(sys.argv)
-if len(sys.argv)==7:
-	if sys.argv[6]=="True":
-		b = backtrack(t3, d3, i3, str_A, str_B, sub_matrix, gap_cost_a, gap_cost_b, "", "", len(str_A), len(str_B))
-	
+#t3, p3, d3, i3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
+#print(sys.argv)
+#if len(sys.argv)==7:
+#	if sys.argv[6]=="True":
+#		b = backtrack(t3, d3, i3, str_A, str_B, sub_matrix, gap_cost_a, gap_cost_b, "", "", len(str_A), len(str_B))
+lst_time=[]	
+lst_length=[]
+#print(len(str_A))
+for i in range(1,len(str_A)//10):
+	print(i)
+	s=10*i
+	start = time.time()
+	t3, p3, d3, i3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A[:s], str_B[:s])
+	end = time.time()
+	lst_time.append(end-start)
+	lst_length.append(s)
+print(lst_time)
+
+ax = sns.scatterplot(x = lst_length, y = lst_time)
+ax.savefig("time_of_alg.png")
+
+
+
+
+
+
 
 
 # Get the sub matrix
