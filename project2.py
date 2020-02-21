@@ -83,6 +83,7 @@ def calculate_alignment_matrix(sm, gc, str_A, str_B):
         #iterate through columns
         for j in range(0, len(str_B) + 1):
             T[i,j], P[i,j] = calc_cost(i, j, T, P, str_A, str_B, sm, gc)
+    print(T[len(str_A),len(str_B)])
     return T, P
 
 #Calculate cost of one cell
@@ -184,8 +185,15 @@ gap_cost = int(sys.argv[2])
 str_A = read_fasta_file(sys.argv[3]).seq.upper()
 str_B = read_fasta_file(sys.argv[4]).seq.upper()
 
+
 t3, p3 = calculate_alignment_matrix(sub_matrix, gap_cost, str_A, str_B)
-b = backtrack(t3, str_A, str_B, sub_matrix, gap_cost, "", "", len(str_A), len(str_B))
+print(sys.argv)
+if len(sys.argv)==6:
+	if sys.argv[5]=="True":
+		
+		b = backtrack(t3, str_A, str_B, sub_matrix, gap_cost, "", "", len(str_A), len(str_B))
+	
+
 
 # Get the sub matrix
 #print(parse_phylip("sub_matrix2.txt"))
