@@ -11,11 +11,15 @@ def read_fasta_file(filename):
 #sub_mtrx = np.array([[10, 2, 5, 2], [2, 10, 2, 5], [5, 2, 10, 2], [2, 5, 2, 10]])
 #print(sub_mtrx)
 
+
+'''
 sub_matrix = {"A": {"A": 10, "C": 2, "G": 5, "T": 2}, 
             "C": {"A": 2, "C": 10, "G": 2, "T": 5}, 
             "G": {"A": 5, "C": 2, "G": 10, "T": 2}, 
-            "T": {"A": 2, "C": 5, "G": 2, "T": 10}}
+           "T": {"A": 2, "C": 5, "G": 2, "T": 10}}
 gap_cost = -5
+'''
+
 
 #Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
 def calculate_alignment_matrix(sm, gc, str_A, str_B):
@@ -48,15 +52,15 @@ def calc_cost(i, j, T, P, str_A, str_B, sm, gc):
         if(i == 0 and j == 0):
             zero_cost = 0
             pred = 1
-        max_val = max(diag_cost, above_cost, left_cost, zero_cost)  
+        min_val = min(diag_cost, above_cost, left_cost, zero_cost)  
         #Set number of predecessors
-        if(diag_cost == max_val):
+        if(diag_cost == min_val):
             pred += P[i-1,j-1] 
-        if(above_cost == max_val):
+        if(above_cost == min_val):
             pred += P[i-1,j] 
-        if(left_cost == max_val):
+        if(left_cost == min_val):
             pred += P[i,j-1] 
-        return max_val, pred  
+        return min_val, pred  
     return T[i,j]
 
 
