@@ -77,7 +77,7 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     elif (i==0 and j==0):
         #print(res_str_A[::-1] + "\n" + res_str_B[::-1])
         x = open("alignment.fasta", "w")
-        x.write(res_str_A[::-1] + "\n" + res_str_B[::-1])
+        x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
         x.close()
 
         
@@ -103,7 +103,7 @@ t2, p2 = calculate_alignment_matrix(sub_matrix, gap_cost, fasta1.seq, fasta2.seq
 
 
 # Question 3 (backtracking)
-#backtrack(t, string_A, string_B, sub_matrix, gap_cost, "", "", len(string_A), len(string_B))
+backtrack(t, string_A, string_B, sub_matrix, gap_cost, "", "", len(string_A), len(string_B))
 #backtrack(t2, fasta1.seq, fasta2.seq, sub_matrix, gap_cost, "", "", len(fasta1.seq), len(fasta2.seq))
 #Optimal alignment is written to the file "alignment.fasta"
 
