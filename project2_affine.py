@@ -87,7 +87,7 @@ def calculate_alignment_matrix(sm, gc_a, gc_b, str_A, str_B):
         for j in range(0, len(str_B) + 1):
             T[i,j], P[i,j], D[i,j], I[i,j] = calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b)
     print(T[len(str_A),len(str_B)])
-    return T, P
+    return T, P, D, I
 
 #Calculate cost of one cell
 def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
@@ -105,7 +105,7 @@ def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
         	if(i >= 0 and j > 0):
         		diag_cost_I = T[i,j-1] + (gc_a + gc_b)
         	if (i >=0  and j > 1):
-        		left_cost_I = D[i,j-1] + gc_a
+        		left_cost_I = I[i,j-1] + gc_a
         	insertion = min(diag_cost_I, left_cost_I)
 
         #get diagonal value
@@ -138,18 +138,20 @@ def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
 
 #Find an optimal alignment based on an alignment matrix, T
 #last cell: T[len(str_A) - 1, len(str_B) - 1]
-def backtrack(T, str_A, str_B, sm, gc_a, gc_b, res_str_A, res_str_B, i, j):
-    cell = T[i, j]
+def backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A, res_str_B, i, j):
+	
     #print("i: " + str(i) + " j:" + str(j))
     #diagonal cell - substitution
-    if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1] , res_str_B + str_B[j-1], i-1, j-1)
+
+
+    if (i > 0 and j > 0 and T[i,j] == T[i-1,j-1] + sm[str_A[i-1]][str_B[j-1]]):
+        backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A + str_A[i-1] , res_str_B + str_B[j-1], i-1, j-1)
     #upper cell - insertion    
-    elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1], res_str_B + "-",  i-1, j)
+    elif (i > 0 and j >= 0 and T[i,j] == D[i,j]):
+        backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A + str_A[i-1], res_str_B + "-",  i-1, j)
     #left cell - deletion
-    elif (i >= 0 and j > 0 and cell == T[i, j-1] + gc):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
+    elif (i >= 0 and j > 0 and T[i,j] == I[i,j]):
+        backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
     elif (i==0 and j==0):
         #print(res_str_A[::-1] + "\n" + res_str_B[::-1])
         x = open("alignment.fasta", "w")
@@ -202,11 +204,11 @@ str_A = read_fasta_file(sys.argv[4]).seq.upper()
 str_B = read_fasta_file(sys.argv[5]).seq.upper()
 
 
-t3, p3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
+t3, p3, d3, i3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
 print(sys.argv)
 if len(sys.argv)==7:
 	if sys.argv[6]=="True":
-		b = backtrack(t3, str_A, str_B, sub_matrix, gap_cost_a, gap_cost_b, "", "", len(str_A), len(str_B))
+		b = backtrack(t3, d3, i3, str_A, str_B, sub_matrix, gap_cost_a, gap_cost_b, "", "", len(str_A), len(str_B))
 	
 
 
