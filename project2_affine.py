@@ -158,12 +158,13 @@ if(all(c in letters for c in str_A) and all(c in letters for c in str_B)):
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
 
+
+'''
 # Measuring running time 
 lst_time=[]	
 lst_length=[]
 #print(len(str_A))
 for i in range(1,len(str_A)//10):
-	print(i)
 	s=10*i
 	start = time.time()
 	t3, p3, d3, i3 = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A[:s], str_B[:s])
@@ -172,13 +173,11 @@ for i in range(1,len(str_A)//10):
 	lst_length.append(s)
 print(lst_time)
 
-
-
 ax = sns.scatterplot(x = lst_length, y = lst_time)
 ax.set(xlabel = "lenght of seq", ylabel = "Time (sec/n^2)")
 figure = ax.get_figure()
 figure.savefig("time_of_alg_affine_n2.png")
-
+'''
 
 
 
