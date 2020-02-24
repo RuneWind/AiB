@@ -32,7 +32,6 @@ Returning a dictionary of this format (if getAlphabet = False):
 If getAlphabet = True, we instead return a list of the alphabet letters:
 ['A', 'C', 'G', 'T']
 """
-
 def parse_phylip(filename, getAlphabet = False):
     f= open(filename, "r")    
     f1 = f.readlines()
@@ -57,13 +56,11 @@ def parse_phylip(filename, getAlphabet = False):
         return sub_matrix
         
 
+
 #Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and affine gap cost g(k) = gc_a*k + gc_b
 def calculate_alignment_matrix(sm, gc_a, gc_b, str_A, str_B):
-    #create array with None values to fill with cost values
+    #create arrays with None values to fill with cost values
     T = np.full((len(str_A) + 1, len(str_B) + 1), None)
-    #create array with None values to fill with # of predecessors values    
-    P = np.full((len(str_A) + 1, len(str_B) + 1), None)
-
     D = np.full((len(str_A) + 1, len(str_B) + 1), None)
     I = np.full((len(str_A) + 1, len(str_B) + 1), None)
 
@@ -71,16 +68,17 @@ def calculate_alignment_matrix(sm, gc_a, gc_b, str_A, str_B):
     for i in range(0, len(str_A) + 1):
         #iterate through columns
         for j in range(0, len(str_B) + 1):
-            T[i,j], P[i,j], D[i,j], I[i,j] = calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b)
+            T[i,j], D[i,j], I[i,j] = calc_cost(i, j, T, D, I, str_A, str_B, sm, gc_a, gc_b)
     print(T[len(str_A),len(str_B)])
-    return T, P, D, I
+    return T, D, I
+
+
 
 #Calculate cost of one cell
-def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
+def calc_cost(i, j, T, D, I, str_A, str_B, sm, gc_a, gc_b):
     if(T[i,j] is None):
-        pred = 0
         diag_cost = above_cost = left_cost = zero_cost = float("inf")
-        diag_cost_D = diag_cost_I = above_cost_D = left_cost_I = float("inf")
+        diag_cost_D = above_cost_D = diag_cost_I = left_cost_I = float("inf")
         if(D[i,j] is None):
         	if(i > 0 and j >= 0):
         		diag_cost_D = T[i-1,j] + (gc_a + gc_b)
@@ -95,7 +93,7 @@ def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
         	insertion = min(diag_cost_I, left_cost_I)
         #get diagonal value
         if(i > 0 and j > 0):
-            diag_cost = calc_cost(i-1, j-1, T, P, D, I, str_A, str_B, sm, gc_a, gc_b) + sm[str_A[i-1]][str_B[j-1]]
+            diag_cost = calc_cost(i-1, j-1, T, D, I, str_A, str_B, sm, gc_a, gc_b) + sm[str_A[i-1]][str_B[j-1]]
         #get above value
         if(i > 0 and j >= 0):
             above_cost = deletion
@@ -105,18 +103,9 @@ def calc_cost(i, j, T, P, D, I, str_A, str_B, sm, gc_a, gc_b):
         #Left top corner
         if(i == 0 and j == 0):
             zero_cost = 0
-            pred = 1
         min_val = min(diag_cost, above_cost, left_cost, zero_cost)  
-        #Set number of predecessors
-        if(diag_cost == min_val):
-            pred += P[i-1,j-1] 
-        if(above_cost == min_val):
-            pred += P[i-1,j] 
-        if(left_cost == min_val):
-            pred += P[i,j-1] 
-        return min_val, pred, deletion, insertion 
+        return min_val, deletion, insertion 
     return T[i,j]
-
 
 
 
@@ -138,10 +127,8 @@ def backtrack(T, D, I, str_A, str_B, sm, gc_a, gc_b, res_str_A, res_str_B, i, j)
 
 
 
-
-
 # Code we run from command line
-# Get sub matrix, gap cost, and sequences from command line variables
+# Get sub matrix, gap costs, and sequences from command line variables
 sub_matrix = parse_phylip(sys.argv[1])
 gap_cost_a = int(sys.argv[2])
 gap_cost_b = int(sys.argv[3])
@@ -151,8 +138,11 @@ str_B = read_fasta_file(sys.argv[5]).seq.upper()
 # Get letters specified in substitution matrix file
 letters = parse_phylip(sys.argv[1], True)
 
+# Check if sequences only contain allowed letters 
 if(all(c in letters for c in str_A) and all(c in letters for c in str_B)):
-    t, p, d, i = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
+    # Calculate alignment matrix and print optimal cost
+    t, d, i = calculate_alignment_matrix(sub_matrix, gap_cost_a, gap_cost_b, str_A, str_B)
+    # If we want to backtrack, write optimal alignment in file alignment.fasta
     if len(sys.argv)==7 and sys.argv[6]=="True":
         backtrack(t, d, i, str_A, str_B, sub_matrix, gap_cost_a, gap_cost_b, "", "", len(str_A), len(str_B))
 else:
@@ -178,14 +168,3 @@ ax.set(xlabel = "lenght of seq", ylabel = "Time (sec/n^2)")
 figure = ax.get_figure()
 figure.savefig("time_of_alg_affine_n2.png")
 '''
-
-
-
-
-
-
-
-# Get the sub matrix
-#print(parse_phylip("sub_matrix2.txt"))
-# Get the alphabet - we use this to check if our sequences contain only the letters in the alphabet
-#print(parse_phylip("sub_matrix2.txt", True))
