@@ -46,23 +46,29 @@ def extend_M_with_A(M, A):
         # Case: (Mis)match or deletion
         if A[0][j] != "-":
             pos = M[0][old_pos:].find(A[0][j]) + old_pos
-            gaps = pos - old_pos - 1
+            print("pos ", pos, "\noldpos ", old_pos)
+            gaps = pos - old_pos -1
             old_pos = pos
+            print(M)
             # Case: (Mis)match
             if A[1][j] != "-":
-                M[-1] = M[-1] + "-"*gaps + A[1][j]
+                if gaps >= 0:
+                    M[-1] = M[-1] + "-"*gaps + A[1][j]
+                else:
+                    M[-1] = M[-1] + A[1][j]
+                    old_pos += 1
             # Case: Deletion
             else:
-               M[-1] = M[-1][:pos] + "-"
+                M[-1] = M[-1][:pos] + "-"
         # Case: Insertion
         else:
             if pos == 0:
                 for k in range(0,len(M)-1):
-                   M[k] = "-" + M[k]
+                    M[k] = "-" + M[k]
                 M[-1] = A[1][j] 
             if pos > 0:
                 for k in range(0,len(M)-1):
-                   M[k] = M[k][:pos+1] + "-" + M[k][pos+1:]
+                    M[k] = M[k][:pos+1] + "-" + M[k][pos+1:]
                 M[-1] = M[-1][:pos+1] + A[1][j] 
             pos = pos + 1
             old_pos = pos
