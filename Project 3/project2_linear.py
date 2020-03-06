@@ -109,9 +109,33 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
         backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
     elif (i==0 and j==0):
         #write resulting alignment to fasta file
-        x = open("alignment.fasta", "w")
-        x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
-        x.close()
+        #x = open("alignment.fasta", "w")
+        #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
+        #x.close()
+        #print("AAHAHAHA")
+        #return "AAAAAAAAAH"
+        ret_list = [res_str_A[::-1], res_str_B[::-1]]
+        print(ret_list)
+        return "AA"
+
+a_matrix = np.array([[0, 5, 10, 15, 20, 25],
+            [5, 0, 5, 10, 15, 20],
+            [10, 5, 2, 7, 10, 15],
+            [15, 10, 7, 7, 12, 15,],
+            [20, 15, 10, 7, 9, 12]])
+
+str_A = "ACGT"
+str_B = "ATTCT"
+
+sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
+            "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
+            "G": {"A": 2, "C": 5, "G": 0, "T": 5}, 
+            "T": {"A": 5, "C": 2, "G": 5, "T": 0}}
+
+gap_cost = 5
+#print(a_matrix[len(str_A)] [len(str_B)])
+print(backtrack(a_matrix, str_A, str_B, sub_matrix, gap_cost, "", "", len(str_A), len(str_B)))
+
 
 
 """

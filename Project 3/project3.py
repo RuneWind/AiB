@@ -2,17 +2,26 @@ import numpy as np
 import project2_linear as pa #pairwise alignment
 
 # Example from slide 12 (Extend M3 with A)
-A = ["ACG-T", "ACGGT"]
-M = ["A--CGT", "ATTC-T", "CT-CGA", ""]
+#A = ["ACG-T", "ACGGT"]
+#M = ["A--CGT", "ATTC-T", "CT-CGA", ""]
+S = ["ACGT", "ATTCT", "CTCGA"]
 
-string_A = "AATAAT"
-string_B = "AAGG"
-
+#string_A = "AATAAT"
+#string_B = "AAGG"
+"""
 sub_matrix = {"A": {"A": 10, "C": 2, "G": 5, "T": 2}, 
             "C": {"A": 2, "C": 10, "G": 2, "T": 5}, 
             "G": {"A": 5, "C": 2, "G": 10, "T": 2}, 
             "T": {"A": 2, "C": 5, "G": 2, "T": 10}}
 gap_cost = -5
+"""
+
+sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
+            "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
+            "G": {"A": 2, "C": 5, "G": 0, "T": 5}, 
+            "T": {"A": 5, "C": 2, "G": 5, "T": 0}}
+
+gap_cost = 5
 
 # Example from week 4 exercise 4.5 (Extend M4 with A)
 #A = ["-AC-GT", "G-TAGT"]
@@ -32,7 +41,6 @@ def find_center_string(S):
 def extend_M_with_A(M, A):
     old_pos = 0
     pos = 0
-    
     for j in range(0, len(A[0])):
         # Case: (Mis)match or deletion
         if A[0][j] != "-":
@@ -59,7 +67,23 @@ def extend_M_with_A(M, A):
             old_pos = pos
     return M
 
+def multiple_align(S, center):
+    M = [center]
+    S.remove(center)
+    print("S ", S)
+    for s in S:
+        A_matrix = pa.calculate_alignment_matrix(sub_matrix, gap_cost, center, s)
+        print(A_matrix)
+        # optimal alignment
+        Al = "HEJ"
+        print(A_matrix)
+        Al = pa.backtrack(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
+        print("A ", Al)
+        #M = extend_M_with_A(M, A)
+    return M
 
-print(extend_M_with_A(M, A))
+#print(extend_M_with_A(M, A))
+center = find_center_string(S)
+multiple_align(S, center)
 
-print(find_center_string(["AG", "AA", "GG", "CC", "TT"]))
+#print(find_center_string(["AG", "AA", "GG", "CC", "TT"]))
