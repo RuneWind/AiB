@@ -39,6 +39,7 @@ def find_center_string(S):
     return S[index_of_min_score]
 
 def extend_M_with_A(M, A):
+    M.append("")
     old_pos = 0
     pos = 0
     for j in range(0, len(A[0])):
@@ -68,22 +69,24 @@ def extend_M_with_A(M, A):
     return M
 
 def multiple_align(S, center):
-    M = [center]
+    M = []
     S.remove(center)
-    print("S ", S)
     for s in S:
+        print("s: ", s)
+        print("M ", M)
         A_matrix = pa.calculate_alignment_matrix(sub_matrix, gap_cost, center, s)
-        print(A_matrix)
         # optimal alignment
-        Al = "HEJ"
-        print(A_matrix)
-        Al = pa.backtrack(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
-        print("A ", Al)
-        #M = extend_M_with_A(M, A)
+        A = pa.backtrack(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
+        print("A ", A)
+        if(s != S[0]):
+            M = extend_M_with_A(M, A)
+        else:
+            M = A
+        print("M ny ", M)
     return M
 
 #print(extend_M_with_A(M, A))
 center = find_center_string(S)
-multiple_align(S, center)
+print(multiple_align(S, center))
 
 #print(find_center_string(["AG", "AA", "GG", "CC", "TT"]))

@@ -100,24 +100,20 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     cell = T[i, j]
     #diagonal cell - substitution
     if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1] , res_str_B + str_B[j-1], i-1, j-1)
+        return backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1] , res_str_B + str_B[j-1], i-1, j-1)
     #upper cell - insertion    
     elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1], res_str_B + "-",  i-1, j)
+        return backtrack(T, str_A, str_B, sm, gc, res_str_A + str_A[i-1], res_str_B + "-",  i-1, j)
     #left cell - deletion
     elif (i >= 0 and j > 0 and cell == T[i, j-1] + gc):
-        backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
+        return backtrack(T, str_A, str_B, sm, gc, res_str_A + "-", res_str_B + str_B[j-1], i, j-1)
     elif (i==0 and j==0):
         #write resulting alignment to fasta file
         #x = open("alignment.fasta", "w")
         #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
         #x.close()
-        #print("AAHAHAHA")
-        #return "AAAAAAAAAH"
-        ret_list = [res_str_A[::-1], res_str_B[::-1]]
-        print(ret_list)
-        return "AA"
-
+        return [res_str_A[::-1], res_str_B[::-1]]
+"""
 a_matrix = np.array([[0, 5, 10, 15, 20, 25],
             [5, 0, 5, 10, 15, 20],
             [10, 5, 2, 7, 10, 15],
@@ -135,7 +131,7 @@ sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5},
 gap_cost = 5
 #print(a_matrix[len(str_A)] [len(str_B)])
 print(backtrack(a_matrix, str_A, str_B, sub_matrix, gap_cost, "", "", len(str_A), len(str_B)))
-
+"""
 
 
 """
