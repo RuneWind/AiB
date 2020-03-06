@@ -85,8 +85,15 @@ def multiple_align(S, center):
         print("M ny ", M)
     return M
 
-#print(extend_M_with_A(M, A))
-center = find_center_string(S)
-print(multiple_align(S, center))
+def print_alignment_to_file(seq_list):
+    #write alignment list to fasta file
+    x = open("alignment.fasta", "w")
+    for i in range(len(seq_list)):    
+        x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
+    x.close()
 
-#print(find_center_string(["AG", "AA", "GG", "CC", "TT"]))
+S = ["GTTCCGAAAGGCTAGCGCTAGGCGCC", "ATGGATTTATCTGCTCTTCG", "TGCATGCTGAAACTTCTCAACCA"]
+center = find_center_string(S)
+seq_list = multiple_align(S, center)
+print_alignment_to_file(seq_list)
+
