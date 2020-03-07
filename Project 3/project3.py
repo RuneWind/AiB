@@ -6,16 +6,6 @@ import project2_linear as pa #pairwise alignment
 #M = ["A--CGT", "ATTC-T", "CT-CGA", ""]
 S = ["ACGT", "ATTCT", "CTCGA"]
 
-#string_A = "AATAAT"
-#string_B = "AAGG"
-"""
-sub_matrix = {"A": {"A": 10, "C": 2, "G": 5, "T": 2}, 
-            "C": {"A": 2, "C": 10, "G": 2, "T": 5}, 
-            "G": {"A": 5, "C": 2, "G": 10, "T": 2}, 
-            "T": {"A": 2, "C": 5, "G": 2, "T": 10}}
-gap_cost = -5
-"""
-
 sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
             "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
             "G": {"A": 2, "C": 5, "G": 0, "T": 5}, 
@@ -39,56 +29,51 @@ def find_center_string(S):
     return S[index_of_min_score]
 
 def extend_M_with_A(M, A):
-    M.append("")
-    old_pos = 0
-    pos = 0
-    for j in range(0, len(A[0])):
-        # Case: (Mis)match or deletion
-        if A[0][j] != "-":
-            pos = M[0][old_pos:].find(A[0][j]) + old_pos
-            gaps = pos - old_pos - 1
-            old_pos = pos
-            # Case: (Mis)match
-            if A[1][j] != "-":
-                if pos == 0:
-                    M[-1] = M[-1] + A[1][j]
-                    old_pos += 1
-                else:
-                    M[-1] = M[-1] + "-"*gaps + A[1][j]
-            # Case: Deletion
-            else:
-               M[-1] = M[-1] + "-"
-               print(M[-1])
-        # Case: Insertion
+    # List for holding new M-strings
+    new_M = ["" for i in range(len(M))]
+    # String holding the last M-string for the new M-list
+    new_M_str = ""
+    # Iterate through columns in A (opt alignment)
+    for j in range(len(A[0])):
+        # Upper and lower symbol in the j'th column
+        upper_symbol = A[0][j]
+        lower_symbol = A[1][j]
+        # Case: insertion
+        if upper_symbol == "-":
+            # We want to add a column to M consisting of only "-"'s except 
+            # the last row, which should contain lower_symbol:
+            # Add "-" to new M-strings (except for last M-string)
+            new_M = [old_str + "-" for old_str in new_M]
+            # Add lower_symbol to last M-string
+            new_M_str += lower_symbol
+        # Case: (mis)match or deletion
         else:
-            pos = pos + 1
-            old_pos = pos
-            if pos == 0:
-                for k in range(0,len(M)-1):
-                   M[k] = "-" + M[k]
-                M[-1] = A[1][j] 
-            if pos > 0:
-                for k in range(0,len(M)-1):
-                   M[k] = M[k][:pos+1] + "-" + M[k][pos+1:]
-                M[-1] = M[-1] + A[1][j] 
-    M[-1] = M[-1].ljust(len(M[0]), '-')
-    return M
+            # Find first occurrance of upper_symbol in first M-string 
+            # (we have cut off the part the string that we have already added to the new M-strings)
+            pos = M[0].find(upper_symbol)
+            # Add everything up until this symbol to all the new M-strings (except the last)
+            prefixes_M = [m_str[:pos+1] for m_str in M]
+            new_M = [new_M[i] + prefixes_M[i] for i in range(len(new_M))]
+            # To the last string, add correspondingly many gaps (minus 1) and lower_symbol
+            new_M_str += "-"*pos + lower_symbol
+            # Update M to only contain suffix that we have not yet "transferred" to new_M yet
+            M = [m_str[pos+1:] for m_str in M]
+    # Add the last M-string to the updated M-strings in new_M
+    new_M.append(new_M_str)
+    # Return entire new M
+    return new_M
 
 def multiple_align(S, center):
     M = []
     S.remove(center)
     for s in S:
-        print("s: ", s)
-        print("M ", M)
         A_matrix = pa.calculate_alignment_matrix(sub_matrix, gap_cost, center, s)
         # optimal alignment
         A = pa.backtrack(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
-        print("A ", A)
         if(s != S[0]):
             M = extend_M_with_A(M, A)
         else:
             M = A
-        print("M ny ", M)
     return M
 
 def print_alignment_to_file(seq_list):
