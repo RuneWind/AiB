@@ -1,10 +1,31 @@
 import numpy as np
+from Bio import SeqIO
 import project2_linear as pa #pairwise alignment
+
 
 # Example from slide 12 (Extend M3 with A)
 #A = ["ACG-T", "ACGGT"]
 #M = ["A--CGT", "ATTC-T", "CT-CGA", ""]
+
+# SOME TEST STUFF - MAYBE DELETE LATER
+"""
 S = ["ACGT", "ATTCT", "CTCGA"]
+S1 = ["AAAA", "CCCC", "GGGG", "TTTT"]
+S2 = ["ACAC", "ACCC", "CGGG", "TCTC"]
+S3=["ATGGATTTATCTGCGGATCATGTTGAAGAAGTACAAAATGTCCTCAATGCTATGCAGAAAATCTTAGAGTGTCCAATATGTCTGGAGTTGATCAAAGAGCCTGTCTCTACAAAGTGTGACCACATATTTTGCAAATTTTGTATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAATGTCCTTTGTGTAAGAATGA", 
+    "ATGGATTTATCTGCGGATCGTGTTGAAGAAGTACAAAATGTTCTTAATGCTATGCAGAAAATCTTAGAGTGTCCAATATGTCTGGAGTTGATCAAAGAGCCTGTTTCTACAAAGTGTGATCACATATTTTGCAAATTTTGTATGCTGAAACTTCTCAACCAGAGGAAGGGGCCTTCACAGTGTCCTTTGTGTAAGAACGA",
+    "GCGAAATGTAACACGGTAGAGGTGATCGGGGTGCGTTATACGTGCGTGGTGACCTCGGTCGGTGTTGACGGTGCCTGGGGTTCCTCAGAGTGTTTTGGGGTCTGAAGGATGGACTTGTCAGTGATTGCCATTGGAGACGTGCAAAATGTGCTTTCAGCCATGCAGAAGAACTTGGAGTGTCCAGTCTGTTTAGATGTGAT",
+    "GTACCTTGATTTCGTATTCTGAGAGGCTGCTGCTTAGCGGTAGCCCCTTGGTTTCCGTGGCAACGGAAAAGCGCGGGAATTACAGATAAATTAAAACTGCGACTGCGCGGCGTGAGCTCGCTGAGACTTCCTGGACGGGGGACAGGCTGTGGGGTTTCTCAGATAACTGGGCCCCTGCGCTCAGGAGGCCTTCACCCTCT",
+    "ATGGATTTATCTGCTGTTCGCGTTGAAGAAGTACAAAATGTCATTAATGCTATGCAGAAAATCTTAGAGTGTCCAATCTGTCTGGAGTTGATCAAGGAACCTGTCTCCACAAAGTGTGACCACATATTTTGCAGATTTTGCATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAGTGTCCTTTGTGTAAGAATGA",
+    "GTTCCGAAAGGCTAGCGCTAGGCGCCAAGCGGCCGGTTTCCTTGGCGACGGAGAGCGCGGGAATTTTAGATAGATTGTAATTGCGGCTGCGCGGCCGCTGCCCGTGCAGCCAGAGGATCCAGCACCTCTCTTGGGGCTTCTCCGTCCTCGGCGCTTGGAAGTACGGATCTTTTTTCTCGGAGAAAAGTTCACTGGAACTG",
+    "ATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAACGCTATGCAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATCAAGGAACCTGTCTCCACAAAGTGTGACCACATATTTTGCAAATTTTGCATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAGTGTCCTTTATGTAAGAATGA",
+    "CGCTGGTGCAACTCGAAGACCTATCTCCTTCCCGGGGGGGCTTCTCCGGCATTTAGGCCTCGGCGTTTGGAAGTACGGAGGTTTTTCTCGGAAGAAAGTTCACTGGAAGTGGAAGAAATGGATTTATCTGCTGTTCGAATTCAAGAAGTACAAAATGTCCTTCATGCTATGCAGAAAATCTTGGAGTGTCCAATCTGTTT"]
+S_dict = {"S1": ["AAAA", "CCCC", "GGGG", "TTTT"],
+          "S2": ["ACAC", "ACCC", "CGGG", "TCTC"]}
+
+S4 = read_fasta_file("brca1-full.fasta")
+"""
+
 
 sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
             "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
@@ -17,10 +38,20 @@ gap_cost = 5
 #A = ["-AC-GT", "G-TAGT"]
 #M = ["A--CG-T", "ATTC--T", "CT-CG-A", "A--CGGT", ""]
 
+# Read fasta files
+def read_fasta_file(filename):
+    rec_list = []
+    nucleic_list = ["U", "W", "S", "M", "K", "R", "Y", "B", "D", "H", "V", "N", "Z"]
+    for record in SeqIO.parse(filename, "fasta"):
+        corrected_seq = str(record.seq)
+        for symbol in nucleic_list:
+            corrected_seq = corrected_seq.replace(symbol, "A")
+        rec_list.append(corrected_seq)
+    return rec_list
 
 def find_center_string(S):
+    sum_scores_list = []
     for pos_cen in S: # possible center
-        sum_scores_list = []
         sum_scores = 0
         for s in S:
             sum_scores += pa.calculate_alignment_matrix(sub_matrix, gap_cost, pos_cen, s)[len(pos_cen), len(s)]
@@ -58,6 +89,11 @@ def extend_M_with_A(M, A):
             new_M_str += "-"*pos + lower_symbol
             # Update M to only contain suffix that we have not yet "transferred" to new_M yet
             M = [m_str[pos+1:] for m_str in M]
+    # Check if there is any suffix of the M-strings remaining and add these to new_M (and corresponding gaps to new_M_str)
+    suffix_length_M = len(M[0])
+    if suffix_length_M > 0:
+        new_M = [new_M[i] + M[i] for i in range(len(new_M))]
+        new_M_str += "-"*suffix_length_M
     # Add the last M-string to the updated M-strings in new_M
     new_M.append(new_M_str)
     # Return entire new M
@@ -82,6 +118,7 @@ def print_alignment_to_file(seq_list):
     for i in range(len(seq_list)):    
         x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
     x.close()
+
 
 S = ["GTTCCGAAAGGCTAGCGCTAGGCGCC", "ATGGATTTATCTGCTCTTCG", "TGCATGCTGAAACTTCTCAACCA"]
 center = find_center_string(S)
