@@ -64,10 +64,38 @@ def find_center_string(S):
         for s in S:
 
             sum_scores += pa.calculate_alignment_matrix(sub_matrix, gap_cost, pos_cen, s)[len(pos_cen), len(s)]
-        print("sum_scores: ", sum_scores)
+        #print("sum_scores: ", sum_scores)
         sum_scores_list.append(sum_scores)
     index_of_min_score = np.argmin(sum_scores_list)
     return S[index_of_min_score]
+
+
+def find_center_string_fast(S):
+    print("Finding center string fast...")
+    # Contains pairwise distances from s to s
+    score_matrix = np.full((len(S), len(S)), None)
+    # Distances from s to s is 0
+    for i in range(len(S)):
+        score_matrix[i, i] = 0  
+    # Iterate through possible centers, S[i]
+    for i in range(len(S)):
+        # Score for S[i]
+        sum_scores = 0
+        # Iterate through all other strings, S[j]
+        for j in range(len(S)):
+            # If we have NOT already computed the distance from S[i] to S[j], do this
+            if(score_matrix[i, j] == None):
+                score = pa.calculate_alignment_matrix(sub_matrix, gap_cost, S[i], S[j])[len(S[i]), len(S[j])]
+                # Distance from S[i] to S[j] is equal to the distance from S[j] to S[i]
+                score_matrix[i, j] = score
+                score_matrix[j, i] = score
+            sum_scores += score_matrix[i, j] 
+    # Calculate total scores for S[i]'s
+    total_scores = [sum(score) for score in score_matrix]
+    # The min score index
+    best_score_index = np.argmin(total_scores)
+    # Return string with min score (= center)
+    return S[best_score_index]
 
 def extend_M_with_A(M, A):
     # List for holding new M-strings
@@ -134,7 +162,8 @@ def print_alignment_to_file(seq_list):
 
 #S = read_fasta_file("brca1-full_2.fasta")
 S = read_fasta_file("brca1-full.fasta")
-center = find_center_string(S)
+#center = find_center_string(S)
+center = find_center_string_fast(S)
 seq_list = multiple_align(S, center)
 print_alignment_to_file(seq_list)
 
