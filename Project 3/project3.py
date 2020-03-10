@@ -8,10 +8,12 @@ import project2_linear as pa #pairwise alignment
 #M = ["A--CGT", "ATTC-T", "CT-CGA", ""]
 
 # SOME TEST STUFF - MAYBE DELETE LATER
-"""
-S = ["ACGT", "ATTCT", "CTCGA"]
-S1 = ["AAAA", "CCCC", "GGGG", "TTTT"]
+
+#S = ["ACGT", "ATTCT", "CTCGA"]
+#S1 = ["AAAA", "CCCC", "GGGG", "TTTT"]
 S2 = ["ACAC", "ACCC", "CGGG", "TCTC"]
+
+"""
 S3=["ATGGATTTATCTGCGGATCATGTTGAAGAAGTACAAAATGTCCTCAATGCTATGCAGAAAATCTTAGAGTGTCCAATATGTCTGGAGTTGATCAAAGAGCCTGTCTCTACAAAGTGTGACCACATATTTTGCAAATTTTGTATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAATGTCCTTTGTGTAAGAATGA", 
     "ATGGATTTATCTGCGGATCGTGTTGAAGAAGTACAAAATGTTCTTAATGCTATGCAGAAAATCTTAGAGTGTCCAATATGTCTGGAGTTGATCAAAGAGCCTGTTTCTACAAAGTGTGATCACATATTTTGCAAATTTTGTATGCTGAAACTTCTCAACCAGAGGAAGGGGCCTTCACAGTGTCCTTTGTGTAAGAACGA",
     "GCGAAATGTAACACGGTAGAGGTGATCGGGGTGCGTTATACGTGCGTGGTGACCTCGGTCGGTGTTGACGGTGCCTGGGGTTCCTCAGAGTGTTTTGGGGTCTGAAGGATGGACTTGTCAGTGATTGCCATTGGAGACGTGCAAAATGTGCTTTCAGCCATGCAGAAGAACTTGGAGTGTCCAGTCTGTTTAGATGTGAT",
@@ -36,6 +38,8 @@ sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5},
 
 gap_cost = 5
 
+
+
 # Example from week 4 exercise 4.5 (Extend M4 with A)
 #A = ["-AC-GT", "G-TAGT"]
 #M = ["A--CG-T", "ATTC--T", "CT-CG-A", "A--CGGT", ""]
@@ -58,6 +62,7 @@ def find_center_string(S):
     for pos_cen in S: # possible center
         sum_scores = 0
         for s in S:
+
             sum_scores += pa.calculate_alignment_matrix(sub_matrix, gap_cost, pos_cen, s)[len(pos_cen), len(s)]
         print("sum_scores: ", sum_scores)
         sum_scores_list.append(sum_scores)
@@ -127,8 +132,8 @@ def print_alignment_to_file(seq_list):
     x.close()
 
 
+#S = read_fasta_file("brca1-full_2.fasta")
 S = read_fasta_file("brca1-full.fasta")
-#S = read_fasta_file("brca1-testseqs.fasta")
 center = find_center_string(S)
 seq_list = multiple_align(S, center)
 print_alignment_to_file(seq_list)

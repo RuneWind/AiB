@@ -57,16 +57,27 @@ def parse_phylip(filename, getAlphabet = False):
 
 
 
-#Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
-def calculate_alignment_matrix(sm, gc, str_A, str_B):
-    #create array with None values to fill with cost values
-    T = np.full((len(str_A) + 1, len(str_B) + 1), None)
 
+#Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
+def calculate_alignment_matrix(sm1, gc1, strA, strB):
+    #create array with None values to fill with cost values
+    global str_A
+    str_A = strA
+    global str_B
+    str_B = strB
+    global sm 
+    sm = sm1
+    global gc 
+    gc = gc1
+    global T 
+    T = np.full((len(str_A) + 1, len(str_B) + 1), None)
     #iterate through rows
     for i in range(0, len(str_A) + 1):
         #iterate through columns
         for j in range(0, len(str_B) + 1):
-            T[i,j] = calc_cost_nonrec(i, j, T, str_A, str_B, sm, gc)
+            #print(T)
+            T[i,j] = calc_cost_nonrec(i, j)
+            #print(T)
     #print(T[len(str_A),len(str_B)])
     return T
 
@@ -95,20 +106,24 @@ def calc_cost(i, j, T, str_A, str_B, sm, gc):
 
 
 #Calculate cost of one cell
-def calc_cost_nonrec(i, j, T, str_A, str_B, sm, gc):
+def calc_cost_nonrec(i, j):
     if(T[i,j] is None):
         diag_cost = above_cost = left_cost = zero_cost = float("inf")
         #get diagonal value
         if(i > 0 and j > 0):
+            
             diag_cost = T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]
         #get above value
         if(i > 0 and j >= 0):
+            
             above_cost = T[i-1, j] + gc
         #get left value
         if(i >= 0 and j > 0):
+            
             left_cost = T[i, j-1] + gc
         #Left top corner
         if(i == 0 and j == 0):
+            
             zero_cost = 0
         min_val = min(diag_cost, above_cost, left_cost, zero_cost)
         return min_val  
