@@ -23,8 +23,10 @@ S3=["ATGGATTTATCTGCGGATCATGTTGAAGAAGTACAAAATGTCCTCAATGCTATGCAGAAAATCTTAGAGTGTCCA
 S_dict = {"S1": ["AAAA", "CCCC", "GGGG", "TTTT"],
           "S2": ["ACAC", "ACCC", "CGGG", "TCTC"]}
 
-S4 = read_fasta_file("brca1-full.fasta")
+S4 = read_fasta_file("test.fasta")
+
 """
+
 
 
 sub_matrix = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
@@ -49,12 +51,15 @@ def read_fasta_file(filename):
         rec_list.append(corrected_seq)
     return rec_list
 
+
 def find_center_string(S):
+    print("Finding center string...")
     sum_scores_list = []
     for pos_cen in S: # possible center
         sum_scores = 0
         for s in S:
             sum_scores += pa.calculate_alignment_matrix(sub_matrix, gap_cost, pos_cen, s)[len(pos_cen), len(s)]
+        print("sum_scores: ", sum_scores)
         sum_scores_list.append(sum_scores)
     index_of_min_score = np.argmin(sum_scores_list)
     return S[index_of_min_score]
@@ -100,12 +105,13 @@ def extend_M_with_A(M, A):
     return new_M
 
 def multiple_align(S, center):
+    print("Multiple alignment...")
     M = []
     S.remove(center)
     for s in S:
         A_matrix = pa.calculate_alignment_matrix(sub_matrix, gap_cost, center, s)
         # optimal alignment
-        A = pa.backtrack(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
+        A = pa.backtrack_nonrec(A_matrix, center, s, sub_matrix, gap_cost, "", "", len(center), len(s))
         if(s != S[0]):
             M = extend_M_with_A(M, A)
         else:
@@ -113,6 +119,7 @@ def multiple_align(S, center):
     return M
 
 def print_alignment_to_file(seq_list):
+    print("Printing alignment to file...")
     #write alignment list to fasta file
     x = open("alignment.fasta", "w")
     for i in range(len(seq_list)):    
@@ -120,7 +127,8 @@ def print_alignment_to_file(seq_list):
     x.close()
 
 
-S = ["GTTCCGAAAGGCTAGCGCTAGGCGCC", "ATGGATTTATCTGCTCTTCG", "TGCATGCTGAAACTTCTCAACCA"]
+S = read_fasta_file("brca1-full.fasta")
+#S = read_fasta_file("brca1-testseqs.fasta")
 center = find_center_string(S)
 seq_list = multiple_align(S, center)
 print_alignment_to_file(seq_list)

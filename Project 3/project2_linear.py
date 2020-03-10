@@ -66,7 +66,7 @@ def calculate_alignment_matrix(sm, gc, str_A, str_B):
     for i in range(0, len(str_A) + 1):
         #iterate through columns
         for j in range(0, len(str_B) + 1):
-            T[i,j] = calc_cost(i, j, T, str_A, str_B, sm, gc)
+            T[i,j] = calc_cost_nonrec(i, j, T, str_A, str_B, sm, gc)
     #print(T[len(str_A),len(str_B)])
     return T
 
@@ -94,6 +94,27 @@ def calc_cost(i, j, T, str_A, str_B, sm, gc):
         return T[i,j]
 
 
+#Calculate cost of one cell
+def calc_cost_nonrec(i, j, T, str_A, str_B, sm, gc):
+    if(T[i,j] is None):
+        diag_cost = above_cost = left_cost = zero_cost = float("inf")
+        #get diagonal value
+        if(i > 0 and j > 0):
+            diag_cost = T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]
+        #get above value
+        if(i > 0 and j >= 0):
+            above_cost = T[i-1, j] + gc
+        #get left value
+        if(i >= 0 and j > 0):
+            left_cost = T[i, j-1] + gc
+        #Left top corner
+        if(i == 0 and j == 0):
+            zero_cost = 0
+        min_val = min(diag_cost, above_cost, left_cost, zero_cost)
+        return min_val  
+    else:
+        return T[i,j]
+
 
 #Find an optimal alignment based on an alignment matrix, T
 def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
@@ -113,6 +134,41 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
         #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
         #x.close()
         return [res_str_A[::-1], res_str_B[::-1]]
+    
+    
+#Find an optimal alignment based on an alignment matrix, T
+def backtrack_nonrec(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
+    print("Backtracking nonrecursively")
+    res_str_A = ""    
+    res_str_B = ""
+    while(i >= 0 and j >= 0):
+        cell = T[i, j]
+        #diagonal cell - substitution
+        if (i > 0 and j > 0 and cell == T[i-1, j-1] + sm[str_A[i-1]][str_B[j-1]]):
+            res_str_A += str_A[i-1]
+            res_str_B += str_B[j-1]
+            print("i, j: ", i, ", ", j)
+            i -= 1
+            j -= 1
+        #upper cell - insertion    
+        elif (i > 0 and j >= 0 and cell == T[i-1, j] + gc):
+            res_str_A += str_A[i-1]
+            res_str_B += "-"
+            print("i, j: ", i, ", ", j)
+            i -= 1
+        #left cell - deletion
+        elif (i >= 0 and j > 0 and cell == T[i, j-1] + gc):
+            res_str_A += "-"
+            res_str_B += str_B[j-1]
+            print("i, j: ", i, ", ", j)
+            j -= 1
+        elif (i==0 and j==0):
+            #write resulting alignment to fasta file
+            #x = open("alignment.fasta", "w")
+            #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
+            #x.close()
+            return [res_str_A[::-1], res_str_B[::-1]]
+    
 """
 a_matrix = np.array([[0, 5, 10, 15, 20, 25],
             [5, 0, 5, 10, 15, 20],
