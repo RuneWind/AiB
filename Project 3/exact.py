@@ -1,5 +1,3 @@
-
-
 import numpy as np
 
 
@@ -64,9 +62,78 @@ def calc_cost_nonrec(i, j, k):
     else:
         return T[i,j,k]
 
+def backtrack_nonrec(T, str_A, str_B, str_C, i, j, k):
+    print("Backtracking nonrecursively")
+    res_str_A = ""    
+    res_str_B = ""
+    res_str_C = ""
+    while(i >= 0 and j >= 0 and k>= 0):
+        cell = T[i, j, k]
+        #diagonal cell - substitution
+        if (i > 0 and j > 0 and k > 0 and cell == T[i-1, j-1, k-1] + sm[str_A[i-1]][str_B[j-1]] + sm[str_A[i-1]][str_C[k-1]] + sm[str_B[j-1]][str_C[k-1]]):
+            res_str_A += str_A[i-1]
+            res_str_B += str_B[j-1]
+            res_str_C += str_C[k-1]
+            i -= 1
+            j -= 1
+            k -= 1
+        #upper cell - insertion    
+        elif (i > 0 and j > 0 and k>= 0 and cell == T[i-1, j-1, k] + sm[str_A[i-1]][str_B[j-1]] + 2*gc):
+            res_str_A += str_A[i-1]
+            res_str_B += str_B[j-1]
+            res_str_C += "-"
+            i -= 1
+            j -= 1
+        
+        elif (i > 0 and j >= 0 and k> 0 and cell == T[i-1, j, k-1] + sm[str_A[i-1]][str_C[k-1]] + 2*gc):
+            res_str_A += str_A[i-1]
+            res_str_B += "-"
+            res_str_C += str_C[k-1]
+            i -= 1
+            k -= 1
+        elif (i >= 0 and j > 0 and k> 0 and cell == T[i, j-1, k-1] + sm[str_B[j-1]][str_C[k-1]] + 2*gc):
+            res_str_A += "-"
+            res_str_B += str_B[j-1]
+            res_str_C += str_C[k-1]
+            j -= 1
+            k -= 1
+
+        elif (i > 0 and j >= 0 and k>= 0 and cell == T[i-1, j, k] + 2*gc):
+            res_str_A += str_A[i-1]
+            res_str_B += "-"
+            res_str_C += "-"
+            i -= 1
+        elif (i >= 0 and j > 0 and k>= 0 and cell == T[i, j-1, k] + 2*gc):
+            res_str_A += "-"
+            res_str_B += str_B[j-1]
+            res_str_C += "-"
+            j -= 1
+        elif (i >= 0 and j >= 0 and k> 0 and cell == T[i, j, k-1] + 2*gc):
+            res_str_A += "-"
+            res_str_B += "-"
+            res_str_C += str_C[k-1]
+            k -= 1
+
+        elif (i==0 and j==0 and k==0):
+            #write resulting alignment to fasta file
+            #x = open("alignment.fasta", "w")
+            #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
+            #x.close()
+            return [res_str_A[::-1], res_str_B[::-1], res_str_C[::-1]]
+
+
+'''
+strA = "GTTCCGAAAGGCTAGCGCTAGGCGCCAAGCGGCCGGTTTCCTTGGCGACGGAGAGCGCGGGAATTTTAGATAGATTGTAATTGCGGCTGCGCGGCCGCTGCCCGTGCAGCCAGAGGATCCAGCACCTCTCTTGGGGCTTCTCCGTCCTCGGCGCTTGGAAGTACGGATCTTTTTTCTCGGAGAAAAGTTCACTGGAACTG"
+strB = "ATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAACGCTATGCAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATCAAGGAACCTGTCTCCACAAAGTGTGACCACATATTTTGCAAATTTTGCATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAGTGTCCTTTATGTAAGAATGA"
+strC = "CGCTGGTGCAACTCGAAGACCTATCTCCTTCCCGGGGGGGCTTCTCCGGCATTTAGGCCTCGGCGTTTGGAAGTACGGAGGTTTTTCTCGGAAGAAAGTTCACTGGAAGTGGAAGAAATGGATTTATCTGCTGTTCGAATTCAAGAAGTACAAAATGTCCTTCATGCTATGCAGAAAATCTTGGAGTGTCCAATCTGTTT"
+'''
 
 strA = "GTTCCGAAAGGCTAGCGCTAGGCGCC"
 strB = "ATGGATTTATCTGCTCTTCG"
 strC = "TGCATGCTGAAACTTCTCAACCA"
+
 D = calculate_alignment_matrix(sub_m, gc, strA, strB, strC)
 print(D[len(strA), len(strB), len(strC)])
+
+b = backtrack_nonrec(T, strA, strB, strC, len(strA), len(strB), len(strC))
+print(b)
