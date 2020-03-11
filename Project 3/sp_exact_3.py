@@ -94,6 +94,8 @@ def calculate_alignment_matrix(sub_m, gap_cost, strA, strB, strC):
     print(T[len(str_A),len(str_B),len(str_C)])
     return T
 
+
+#Non reccursive calculation of cost
 def calc_cost_nonrec(i, j, k):
     if(T[i,j,k] is None):
         v0 = v1 = v2 = v3 = v4 = v5 = v6 = v7 = float("inf")
@@ -122,6 +124,8 @@ def calc_cost_nonrec(i, j, k):
     else:
         return T[i,j,k]
 
+
+#Non recursive backtracking
 def backtrack_nonrec(T, str_A, str_B, str_C):
     #print("Backtracking nonrecursively")
     res_str_A = ""    
@@ -178,16 +182,10 @@ def backtrack_nonrec(T, str_A, str_B, str_C):
             k -= 1
 
         elif (i==0 and j==0 and k==0):
-            #write resulting alignment to fasta file
-            #x = open("alignment.fasta", "w")
-            #x.write(">seq1\n" + res_str_A[::-1] + "\n\n" + ">seq2\n" + res_str_B[::-1])
-            #x.close()
             return [res_str_A[::-1], res_str_B[::-1], res_str_C[::-1]]
 
-
+#write alignment list to fasta file
 def print_alignment_to_file(seq_list):
-    #print("Printing alignment to file...")
-    #write alignment list to fasta file
     x = open("alignment.fasta", "w")
     for i in range(len(seq_list)):    
         x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
