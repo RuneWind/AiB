@@ -85,6 +85,7 @@ def find_center_string_fast(S):
     # The min score index
     best_score_index = np.argmin(total_scores)
     # Return string with min score (= center)
+    #print(S[best_score_index])
     return S[best_score_index]
 
 def extend_M_with_A(M, A):
@@ -166,10 +167,8 @@ if(all((c in letters for c in s) for s in S)):
     # Calculate alignment matrix and print optimal cost
     center = find_center_string_fast(S)
     seq_list = multiple_align(S, center)
-    # If we want to backtrack, write optimal alignment in file alignment.fasta
-    if len(sys.argv)==5 and sys.argv[4]=="True":
-        print_alignment_to_file(seq_list)
-        print(msa.compute_sp_score("alignment.fasta"))
+    print_alignment_to_file(seq_list)
+    print(msa.compute_sp_score("alignment.fasta"))
 
 
 else:
