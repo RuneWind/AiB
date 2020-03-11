@@ -174,7 +174,6 @@ if(all((c in letters for c in s) for s in S)):
 
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
-   
 
 
 '''
