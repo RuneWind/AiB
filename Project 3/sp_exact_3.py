@@ -2,14 +2,14 @@ import numpy as np
 from Bio import SeqIO
 import sys 
 
-
+'''
 sub_m = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
             "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
             "G": {"A": 2, "C": 5, "G": 0, "T": 5}, 
             "T": {"A": 5, "C": 2, "G": 5, "T": 0}}
 gc = 5
 
-
+'''
 # Read fasta files
 def read_fasta_file(filename):
     rec_list = []
@@ -192,9 +192,6 @@ def print_alignment_to_file(seq_list):
     for i in range(len(seq_list)):    
         x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
     x.close()
-
-
-
 
 
 # Code we run from command line
