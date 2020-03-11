@@ -91,7 +91,7 @@ def calculate_alignment_matrix(sub_m, gap_cost, strA, strB, strC):
         for j in range(0, len(str_B) + 1):
             for k in range(0, len(str_C) + 1):
                 T[i, j, k] = calc_cost_nonrec(i, j, k)
-    #print(T[len(str_A),len(str_B)])
+    print(T[len(str_A),len(str_B),len(str_C)])
     return T
 
 def calc_cost_nonrec(i, j, k):
@@ -123,7 +123,7 @@ def calc_cost_nonrec(i, j, k):
         return T[i,j,k]
 
 def backtrack_nonrec(T, str_A, str_B, str_C):
-    print("Backtracking nonrecursively")
+    #print("Backtracking nonrecursively")
     res_str_A = ""    
     res_str_B = ""
     res_str_C = ""
@@ -186,7 +186,7 @@ def backtrack_nonrec(T, str_A, str_B, str_C):
 
 
 def print_alignment_to_file(seq_list):
-    print("Printing alignment to file...")
+    #print("Printing alignment to file...")
     #write alignment list to fasta file
     x = open("alignment.fasta", "w")
     for i in range(len(seq_list)):    
@@ -218,24 +218,3 @@ else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
    
 
-
-
-
-'''
-strA = "GTTCCGAAAGGCTAGCGCTAGGCGCCAAGCGGCCGGTTTCCTTGGCGACGGAGAGCGCGGGAATTTTAGATAGATTGTAATTGCGGCTGCGCGGCCGCTGCCCGTGCAGCCAGAGGATCCAGCACCTCTCTTGGGGCTTCTCCGTCCTCGGCGCTTGGAAGTACGGATCTTTTTTCTCGGAGAAAAGTTCACTGGAACTG"
-strB = "ATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAACGCTATGCAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATCAAGGAACCTGTCTCCACAAAGTGTGACCACATATTTTGCAAATTTTGCATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAGTGTCCTTTATGTAAGAATGA"
-strC = "CGCTGGTGCAACTCGAAGACCTATCTCCTTCCCGGGGGGGCTTCTCCGGCATTTAGGCCTCGGCGTTTGGAAGTACGGAGGTTTTTCTCGGAAGAAAGTTCACTGGAAGTGGAAGAAATGGATTTATCTGCTGTTCGAATTCAAGAAGTACAAAATGTCCTTCATGCTATGCAGAAAATCTTGGAGTGTCCAATCTGTTT"
-
-
-strA = "GTTCCGAAAGGCTAGCGCTAGGCGCC"
-strB = "ATGGATTTATCTGCTCTTCG"
-strC = "TGCATGCTGAAACTTCTCAACCA"
-
-D = calculate_alignment_matrix(sub_m, gc, strA, strB, strC)
-print(D[len(strA), len(strB), len(strC)])
-
-b = backtrack_nonrec(T, strA, strB, strC, len(strA), len(strB), len(strC))
-print(b)
-
-print_alignment_to_file(b)
-'''

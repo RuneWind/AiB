@@ -2,6 +2,7 @@ import numpy as np
 from Bio import SeqIO
 import project2_linear as pa #pairwise alignment
 import sys 
+import msa_sp_score_3k as msa
 
 
 # Read fasta files
@@ -60,7 +61,7 @@ def parse_phylip(filename, getAlphabet = False):
 
 
 def find_center_string_fast(S):
-    print("Finding center string fast...")
+    #print("Finding center string fast...")
     # Contains pairwise distances from s to s
     score_matrix = np.full((len(S), len(S)), None)
     # Distances from s to s is 0
@@ -127,7 +128,7 @@ def extend_M_with_A(M, A):
     return new_M
 
 def multiple_align(S, center):
-    print("Multiple alignment...")
+    #print("Multiple alignment...")
     M = []
     S.remove(center)
     for s in S:
@@ -141,7 +142,7 @@ def multiple_align(S, center):
     return M
 
 def print_alignment_to_file(seq_list):
-    print("Printing alignment to file...")
+    #print("Printing alignment to file...")
     #write alignment list to fasta file
     x = open("alignment.fasta", "w")
     for i in range(len(seq_list)):    
@@ -168,6 +169,8 @@ if(all((c in letters for c in s) for s in S)):
     # If we want to backtrack, write optimal alignment in file alignment.fasta
     if len(sys.argv)==5 and sys.argv[4]=="True":
         print_alignment_to_file(seq_list)
+        print(msa.compute_sp_score("alignment.fasta"))
+
 
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")

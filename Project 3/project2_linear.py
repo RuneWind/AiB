@@ -150,7 +150,7 @@ def backtrack(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
     
 #Find an optimal alignment based on an alignment matrix, T
 def backtrack_nonrec(T, str_A, str_B, sm, gc, res_str_A, res_str_B, i, j):
-    print("Backtracking nonrecursively")
+    #print("Backtracking nonrecursively")
     res_str_A = ""    
     res_str_B = ""
     while(i >= 0 and j >= 0):
