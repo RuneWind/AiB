@@ -170,4 +170,4 @@ if(all((c in letters for c in s) for s in S)):
     print(msa.compute_sp_score("alignment.fasta"))
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
-   
+
