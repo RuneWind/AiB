@@ -2,7 +2,7 @@ import numpy as np
 from Bio import SeqIO
 import project2_linear as pa #pairwise alignment
 import sys 
-import msa_sp_score_3k as msa
+import msa_sp_score_3k as msa #score for approx
 
 
 # Read fasta files
@@ -59,9 +59,8 @@ def parse_phylip(filename, getAlphabet = False):
     else:
         return sub_matrix
 
-
+#Finds the center string of multiple sequences. The center string is the sequences with lowest alignments score to the other sequences. 
 def find_center_string_fast(S):
-    #print("Finding center string fast...")
     # Contains pairwise distances from s to s
     score_matrix = np.full((len(S), len(S)), None)
     # Distances from s to s is 0
@@ -85,9 +84,10 @@ def find_center_string_fast(S):
     # The min score index
     best_score_index = np.argmin(total_scores)
     # Return string with min score (= center)
-    #print(S[best_score_index])
     return S[best_score_index]
 
+
+#Extend a matrix with two or more alignments with one extra aligment. 
 def extend_M_with_A(M, A):
     # List for holding new M-strings
     new_M = ["" for i in range(len(M))]
@@ -128,8 +128,8 @@ def extend_M_with_A(M, A):
     # Return entire new M
     return new_M
 
+#Fills out the M matrix with alignments found from backtracking
 def multiple_align(S, center):
-    #print("Multiple alignment...")
     M = []
     S.remove(center)
     for s in S:
@@ -142,9 +142,8 @@ def multiple_align(S, center):
             M = A
     return M
 
+#Writes a fasta file with the aligned sequences 
 def print_alignment_to_file(seq_list):
-    #print("Printing alignment to file...")
-    #write alignment list to fasta file
     x = open("alignment.fasta", "w")
     for i in range(len(seq_list)):    
         x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
@@ -164,23 +163,11 @@ letters = parse_phylip(sys.argv[1], True)
 
 # Check if sequences only contain allowed letters 
 if(all((c in letters for c in s) for s in S)):
-    # Calculate alignment matrix and print optimal cost
+    # Calculate alignment matrix and print optimal cost and write fasta file
     center = find_center_string_fast(S)
     seq_list = multiple_align(S, center)
     print_alignment_to_file(seq_list)
     print(msa.compute_sp_score("alignment.fasta"))
-
-
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
    
-
-
-'''
-#S = read_fasta_file("brca1-full_2.fasta")
-S = read_fasta_file("brca1-full.fasta")
-#center = find_center_string(S)
-center = find_center_string_fast(S)
-seq_list = multiple_align(S, center)
-print_alignment_to_file(seq_list)
-'''

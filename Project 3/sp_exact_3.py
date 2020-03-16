@@ -2,14 +2,6 @@ import numpy as np
 from Bio import SeqIO
 import sys 
 
-'''
-sub_m = {"A": {"A": 0, "C": 5, "G": 2, "T": 5}, 
-            "C": {"A": 5, "C": 0, "G": 5, "T": 2}, 
-            "G": {"A": 2, "C": 5, "G": 0, "T": 5}, 
-            "T": {"A": 5, "C": 2, "G": 5, "T": 0}}
-gc = 5
-
-'''
 # Read fasta files
 def read_fasta_file(filename):
     rec_list = []
@@ -65,8 +57,6 @@ def parse_phylip(filename, getAlphabet = False):
         return sub_matrix
 
 
-
-
 #Calculate cost of an optimal alignment for string str_A and str_B with substitution matrix sm and gap cost gc
 def calculate_alignment_matrix(sub_m, gap_cost, strA, strB, strC):
     # Global vars 
@@ -93,7 +83,6 @@ def calculate_alignment_matrix(sub_m, gap_cost, strA, strB, strC):
                 T[i, j, k] = calc_cost_nonrec(i, j, k)
     print(T[len(str_A),len(str_B),len(str_C)])
     return T
-
 
 #Non reccursive calculation of cost
 def calc_cost_nonrec(i, j, k):
@@ -127,7 +116,6 @@ def calc_cost_nonrec(i, j, k):
 
 #Non recursive backtracking
 def backtrack_nonrec(T, str_A, str_B, str_C):
-    #print("Backtracking nonrecursively")
     res_str_A = ""    
     res_str_B = ""
     res_str_C = ""
@@ -211,7 +199,6 @@ if(all(c in letters for c in str_A) and all(c in letters for c in str_B) and all
     if len(sys.argv)==5 and sys.argv[4]=="True":
         b = backtrack_nonrec(t, str_A, str_B, str_C)
         print_alignment_to_file(b)
-
 else:
     print("Error: A letter in a sequence is not specified in the substitution matrix.")
    
