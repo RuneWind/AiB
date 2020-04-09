@@ -1,3 +1,4 @@
+import sys
 from Bio import Phylo
 
 
@@ -101,8 +102,16 @@ def days_algo(tree1, tree2):
     return rfdist
     
 
+
 '''
 Code to run
+'''
+tree1 = Phylo.read(sys.argv[1], 'newick')
+tree2 = Phylo.read(sys.argv[2], 'newick')
+
+print("The RF-distance of ", sys.argv[1], " and ", sys.argv[2], " is ", days_algo(tree1, tree2))
+
+
 '''
 tree1 = Phylo.read('tree1.new', 'newick')
 tree2 = Phylo.read('tree2.new', 'newick')
@@ -121,3 +130,4 @@ Phylo.draw(T1)
 print("T2:")
 Phylo.draw(T2)
 print("RF-dist of T1 and T2:", days_algo(T1, T2))
+'''
