@@ -87,7 +87,7 @@ def days_algo(tree1, tree2):
     # Sort intervals in tree1
     tree1_clade_list = [float(c.name) for c in tree1_clades_to_compare if c.name]
     tree1_sorted_int_clades = sorted(tree1_clade_list)
-    
+
     # Sort intervals in tree2    
     tree2_clade_list = [float(c.name) for c in tree2_clades_to_compare if c.name]
     tree2_sorted_int_clades = sorted(tree2_clade_list)
