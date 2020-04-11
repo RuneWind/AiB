@@ -6,7 +6,7 @@ from Bio import Phylo
 Returns a dictionary of the form {clade: list of names of clade's leaves} with all internal nodes in tree as keys in dictionary
 e.g. {Clade(name = "A"): ["B", "C"], Clade(name = "D"): ["E", "F"], ...}
 '''
-def find_clade_and_leaves_dict(tree):
+def find_clade_and_leaves_dict(tree, root):
     # All clades in tree
     clades = tree.find_clades()    
     clade_and_leaves_dict = {}
@@ -15,10 +15,11 @@ def find_clade_and_leaves_dict(tree):
         if not clade.is_terminal(): # if nonterminal, it is internal; add as key to dict
             clade_and_leaves_dict[clade] = [] 
         if clade.is_terminal(): # if terminal, it is leaf; add as value to dict for all keys that are its parents
-            parents = tree.get_path(clade)
-            for parent in parents:
-                if not parent.is_terminal():
-                    clade_and_leaves_dict[parent].append(clade.name)
+            if clade.name != root.name: # omit the root from dict keys
+                parents = tree.get_path(clade)
+                for parent in parents:
+                    if not parent.is_terminal():
+                        clade_and_leaves_dict[parent].append(clade.name)
     return clade_and_leaves_dict
 
 
@@ -60,14 +61,14 @@ def days_algo(tree1, tree2):
     
     # ***** Step 4.1 *****
     # ***** Annotate internal nodes in tree1 with their depth-first intervals *****
-    tree1_clade_and_leaves_dict = find_clade_and_leaves_dict(tree1)
+    tree1_clade_and_leaves_dict = find_clade_and_leaves_dict(tree1, leaf_to_root)
     annotate_internal_nodes_with_DF_intervals(tree1_clade_and_leaves_dict, leaf_name_to_index_dict)
 
     
     # ***** Step 4.2 ***** 
     # ***** Annotate internal nodes in tree2 with their depth-first intervals, IF the leaves of 
     # the subtree indeed IS an interval (we annotate all internal nodes and then remove non-intervals) *****
-    tree2_clade_and_leaves_dict = find_clade_and_leaves_dict(tree2)
+    tree2_clade_and_leaves_dict = find_clade_and_leaves_dict(tree2, leaf_to_root)
     annotate_internal_nodes_with_DF_intervals(tree2_clade_and_leaves_dict, leaf_name_to_index_dict)
     # Remove non-interval nodes
     for int_clade in tree2_clade_and_leaves_dict.keys():
@@ -101,16 +102,17 @@ def days_algo(tree1, tree2):
     rfdist = len(tree1_clades_to_compare) + len(tree2_clades_to_compare) - 2*len(intersect)
     return rfdist
     
+    
 
 
 '''
 Code to run
 '''
+
 tree1 = Phylo.read(sys.argv[1], 'newick')
 tree2 = Phylo.read(sys.argv[2], 'newick')
 
 print("The RF-distance of ", sys.argv[1], " and ", sys.argv[2], " is ", days_algo(tree1, tree2))
-
 
 '''
 tree1 = Phylo.read('tree1.new', 'newick')
