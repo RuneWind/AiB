@@ -95,7 +95,8 @@ def days_algo(tree1, tree2):
     tree2_sorted_int_clades = sorted(tree2_clade_list)
 
     # Compare the intervals in tree1 and tree2
-    intersect = set(tree1_sorted_int_clades).intersection(tree2_sorted_int_clades)
+    intersect = [c for c in tree1_sorted_int_clades if c in tree2_sorted_int_clades]
+    #intersect = set(tree1_sorted_int_clades).intersection(tree2_sorted_int_clades)
         
     # Return Robinson-Foulds Distance
     # RF_cist = "number of intervals not found in both trees" = (intervals in tree1 - intersect) + (intervals in tree2 - intersect)
@@ -113,6 +114,8 @@ tree1 = Phylo.read(sys.argv[1], 'newick')
 tree2 = Phylo.read(sys.argv[2], 'newick')
 
 print("The RF-distance of ", sys.argv[1], " and ", sys.argv[2], " is ", days_algo(tree1, tree2))
+
+
 
 '''
 tree1 = Phylo.read('tree1.new', 'newick')
