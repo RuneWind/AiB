@@ -58,8 +58,24 @@ def parse_phylip(filename, getAlphabet = False):
     
  
 def nj(dist_matrix, index_to_letter_dict):
-    S = index_to_letter_dict.values()
+    # String of tree that we will construct (in newick format)
+    tree = ""
+    S_letters = index_to_letter_dict.values()
+    S = index_to_letter_dict.keys()
+    #print(S)
     while len(S) > 3:
+        N = np.zeros((len(dist_matrix), len(dist_matrix)))
+        print(N)
+        for i in range(len(dist_matrix)):
+            inner_list = dist_matrix[i]
+            for j in range(len(inner_list)):
+                d_ij = dist_matrix[i][j]
+                r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
+                r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
+                N[i][j] = d_ij - (r_i) + r_j
+                #print(N)
+        print(N)
+        
         # Replace all 0s in matrix with inf in order to find a minimum entry different from 0
         dist_matrix = np.array([[x if x != 0 else float("inf") for x in inner_list] for inner_list in dist_matrix])
         
@@ -69,7 +85,9 @@ def nj(dist_matrix, index_to_letter_dict):
         i = min_i_j[0]
         j = min_i_j[1]
         
-        return j
+        tree = "(k, i)"
+        
+        return tree
     
 #print(parse_phylip("example_slide4.phy"))
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
