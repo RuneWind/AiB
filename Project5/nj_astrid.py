@@ -94,7 +94,7 @@ def nj(dist_matrix, index_to_letter_dict):
         weight_ki = (1/2) * (d_ij + r_i - r_j)
         weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
         
-        tree = "(" + S_letters[i] + ":" + str(weight_ki) + "," + S_letters[j] + ":" + str(weight_kj) + ")" + "k"
+        tree = "(" + S_letters[i] + ":" + str(round(weight_ki, 3)) + "," + S_letters[j] + ":" + str(round(weight_kj, 3)) + ")" + "k"
         
         return tree
         
