@@ -56,39 +56,57 @@ def parse_phylip(filename, getAlphabet = False):
     else:
         return dist_matrix, index_to_letter_dict
     
- 
+def get_d_and_rs(dist_matrix, S, i, j):
+    d_ij = dist_matrix[i][j]
+    r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
+    r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
+    return d_ij, r_i, r_j
+    
+    
 def nj(dist_matrix, index_to_letter_dict):
     # String of tree that we will construct (in newick format)
     tree = ""
-    S_letters = index_to_letter_dict.values()
+    S_letters = list(index_to_letter_dict.values())
     S = index_to_letter_dict.keys()
     #print(S)
     while len(S) > 3:
-        N = np.zeros((len(dist_matrix), len(dist_matrix)))
-        print(N)
-        for i in range(len(dist_matrix)):
+        
+        # Step 1 (a): Compute matrix N
+        # Matrix N entry (i,j) is a number indicating "how cloase i and j are to each other and how far they are from the rest"
+        N = np.zeros((len(S), len(S)))
+        for i in range(len(S)):
             inner_list = dist_matrix[i]
             for j in range(len(inner_list)):
-                d_ij = dist_matrix[i][j]
-                r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
-                r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
-                N[i][j] = d_ij - (r_i) + r_j
-                #print(N)
+                #d_ij = dist_matrix[i][j]
+                #r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
+                #r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
+                d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
+                N[i][j] = d_ij - (r_i + r_j)
         print(N)
         
-        # Replace all 0s in matrix with inf in order to find a minimum entry different from 0
-        dist_matrix = np.array([[x if x != 0 else float("inf") for x in inner_list] for inner_list in dist_matrix])
+        # Step 1 (b): Find minimum entry in matrix N
+        #min_val = min([N[i][j] for i in range(len(S))] for j in range(len(S)) if i != j)
+        #min_val = list(min(n for n in col if n != 0) for col in zip(*lst))
+        N_removed_diag = [N[i][j] for i in S for j in S if i != j]
+        min_val = min(N_removed_diag)
+        min_i_j = np.where(N == min_val)[0]
+        i = int(min_i_j[0])
+        j = int(min_i_j[1])
+        print(i, ",",  j)
         
-        # Find min val in matrix (not 0) and its indices, i and j
-        min_val = dist_matrix.min()
-        min_i_j = np.where(dist_matrix == min_val)[0]
-        i = min_i_j[0]
-        j = min_i_j[1]
+        # Add new node k to the tree
+        #d_ij = dist_matrix[i][j]
+        #r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
+        #r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
+        d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
+        weight_ki = (1/2) * (d_ij + r_i - r_j)
+        weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
         
-        tree = "(k, i)"
+        tree = "(" + S_letters[i] + ":" + str(weight_ki) + "," + S_letters[j] + ":" + str(weight_kj) + ")" + "k"
         
         return tree
-    
+        
+        break
 #print(parse_phylip("example_slide4.phy"))
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
 letters = parse_phylip("example_slide4.phy", True)
