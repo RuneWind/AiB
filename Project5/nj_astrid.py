@@ -93,16 +93,12 @@ def nj(dist_matrix, index_to_letter_dict):
         # Step 2 and 3: Add new node k to the tree with weights
         d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
         weight_ki = (1/2) * (d_ij + r_i - r_j)
-        weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
+        weight_kj = (1/2) * (d_ij + r_j - r_i) #d_ij - weight_ki equals (1/2) * (d_ij + r_j - r_i)
         leaf_1 = S_nodes[i]
         leaf_2 = S_nodes[j]
         k = "(" + leaf_1 + ":" + str(round(weight_ki, 3)) + ", " + leaf_2 + ":" + str(round(weight_kj, 3)) + ")"
         print("New node k: \n", k)
         
-        S_nodes.remove(leaf_1)
-        S_nodes.remove(leaf_2)
-        S_nodes.append(k)
-        S = list(range(len(S_nodes)))
         
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
         
@@ -124,9 +120,25 @@ def nj(dist_matrix, index_to_letter_dict):
         print("New dist matrix: \n", dist_matrix)
         
         # Step 5: Delete i and j from S and add new node k to S
-    
-        break
-        
+        S_nodes.remove(leaf_1)
+        S_nodes.remove(leaf_2)
+        S_nodes.append(k)
+        S = list(range(len(S_nodes)))
+        print("S_nodes*********\n", S_nodes)
+    # We now have 3 leaves left: i, j and m
+    # Add a new node v to the tree with weights
+    print("dist_matrix***\n")
+    print(dist_matrix)
+    i = S[0]
+    j = S[1]
+    m = S[2]
+    weight_vi = (1/2) * (dist_matrix[i][j] + dist_matrix[i][m] - dist_matrix[j][m])        
+    weight_vj = (1/2) * (dist_matrix[i][j] + dist_matrix[j][m] - dist_matrix[i][m])        
+    weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])        
+
+    v = "(" + S_nodes[i] + ":" + str(round(weight_vi, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_vj, 3)) + ", " + S_nodes[m] + ":" + str(round(weight_vm, 3)) + ")" 
+
+    return v
         
 #print(parse_phylip("example_slide4.phy"))
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
