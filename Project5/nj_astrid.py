@@ -105,6 +105,8 @@ def nj(dist_matrix, index_to_letter_dict):
         S = list(range(len(S_nodes)))
         
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
+        
+        # Create row for new node k to insert
         row = []
         for m in range(len(dist_matrix)):
             if(m != i and m != j):
@@ -113,7 +115,11 @@ def nj(dist_matrix, index_to_letter_dict):
                 row.append(d_km)
         row.append(0)
         
-        
+        # Remove row i and j
+        dist_matrix = np.delete(dist_matrix, [i,j], 0)        
+        # Remove column i and j
+        dist_matrix = np.delete(dist_matrix, [i,j], 1)        
+
         
         
         # Step 5: Delete i and j from S and add new node k to S
