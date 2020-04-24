@@ -66,7 +66,7 @@ def get_d_and_rs(dist_matrix, S, i, j):
 def nj(dist_matrix, index_to_letter_dict):
     # String of tree that we will construct (in newick format)
     tree = ""
-    S_letters = list(index_to_letter_dict.values())
+    S_nodes = list(index_to_letter_dict.values())
     S = index_to_letter_dict.keys()
     #print(S)
     while len(S) > 3:
@@ -79,7 +79,7 @@ def nj(dist_matrix, index_to_letter_dict):
             for j in range(len(inner_list)):
                 d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
                 N[i][j] = d_ij - (r_i + r_j)
-        print(N)
+        print("N: \n", N)
         
         # Step 1 (b): Find minimum entry in matrix N
         N_removed_diag = [N[i][j] for i in S for j in S if i != j]
@@ -87,18 +87,18 @@ def nj(dist_matrix, index_to_letter_dict):
         min_i_j = np.where(N == min_val)[0]
         i = int(min_i_j[0])
         j = int(min_i_j[1])
-        print(i, ",",  j)
+        print("Min value i and j: \n", i, ",",  j)
         
         # Add new node k to the tree
         d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
         weight_ki = (1/2) * (d_ij + r_i - r_j)
         weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
+        k = "(" + S_nodes[i] + ":" + str(round(weight_ki, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_kj, 3)) + ")"
         
-        tree = "(" + S_letters[i] + ":" + str(round(weight_ki, 3)) + "," + S_letters[j] + ":" + str(round(weight_kj, 3)) + ")" + "k"
-        
-        return tree
-        
+        print("New node k: \n", k)
         break
+        
+        
 #print(parse_phylip("example_slide4.phy"))
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
 letters = parse_phylip("example_slide4.phy", True)
