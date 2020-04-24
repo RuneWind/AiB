@@ -89,13 +89,17 @@ def nj(dist_matrix, index_to_letter_dict):
         j = int(min_i_j[1])
         print("Min value i and j: \n", i, ",",  j)
         
-        # Add new node k to the tree
+        # Step 2 and 3: Add new node k to the tree with weights
         d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
         weight_ki = (1/2) * (d_ij + r_i - r_j)
         weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
         k = "(" + S_nodes[i] + ":" + str(round(weight_ki, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_kj, 3)) + ")"
-        
         print("New node k: \n", k)
+        
+        # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
+        
+        # Step 5: Delete i and j from S and add new node k to S
+    
         break
         
         
