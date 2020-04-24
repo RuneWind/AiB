@@ -1,0 +1,18 @@
+---
+title: "robinson foul"
+author: "Ditte Torlyn"
+date: "21 apr 2020"
+output: html_document
+---
+
+```{r}
+
+
+library(ape)
+tree1 <- read.tree(file = "C:/Users/dtorl/Documents/GitHub/AiB/Project4/trees/normal/qt_clustalo_result.new")
+tree2 <- read.tree(file = "C:/Users/dtorl/Documents/GitHub/AiB/Project4/trees/normal/qt_kalign_result.new")
+
+dist.topo(tree1, tree2, method = "PH85")
+
+```
+
