@@ -77,16 +77,11 @@ def nj(dist_matrix, index_to_letter_dict):
         for i in range(len(S)):
             inner_list = dist_matrix[i]
             for j in range(len(inner_list)):
-                #d_ij = dist_matrix[i][j]
-                #r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
-                #r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
                 d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
                 N[i][j] = d_ij - (r_i + r_j)
         print(N)
         
         # Step 1 (b): Find minimum entry in matrix N
-        #min_val = min([N[i][j] for i in range(len(S))] for j in range(len(S)) if i != j)
-        #min_val = list(min(n for n in col if n != 0) for col in zip(*lst))
         N_removed_diag = [N[i][j] for i in S for j in S if i != j]
         min_val = min(N_removed_diag)
         min_i_j = np.where(N == min_val)[0]
@@ -95,9 +90,6 @@ def nj(dist_matrix, index_to_letter_dict):
         print(i, ",",  j)
         
         # Add new node k to the tree
-        #d_ij = dist_matrix[i][j]
-        #r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
-        #r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
         d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
         weight_ki = (1/2) * (d_ij + r_i - r_j)
         weight_kj = d_ij - weight_ki # equals (1/2) * (d_ij + r_j - r_i)
