@@ -1,4 +1,5 @@
 import numpy as np
+from Bio import Phylo
 
 
 """
@@ -65,8 +66,6 @@ def get_d_and_rs(dist_matrix, S, i, j):
     
 def nj(dist_matrix, index_to_letter_dict):
     print("D: \n", dist_matrix)
-    # String of tree that we will construct (in newick format)
-    tree = ""
     S_nodes = list(index_to_letter_dict.values())
     S = index_to_letter_dict.keys()
     #print(S)
@@ -134,19 +133,34 @@ def nj(dist_matrix, index_to_letter_dict):
     m = S[2]
     weight_vi = (1/2) * (dist_matrix[i][j] + dist_matrix[i][m] - dist_matrix[j][m])        
     weight_vj = (1/2) * (dist_matrix[i][j] + dist_matrix[j][m] - dist_matrix[i][m])        
-    weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])        
+    weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])    
+    print("weight_vi", weight_vi)    
+    print("weight_vj", weight_vj)    
+    print("weight_vm", weight_vm)    
 
     v = "(" + S_nodes[i] + ":" + str(round(weight_vi, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_vj, 3)) + ", " + S_nodes[m] + ":" + str(round(weight_vm, 3)) + ")" 
 
     return v
+
+
+def print_tree_to_file(tree):
+    x = open("tree.newick", "w")
+    x.write(tree)
+    x.close()
         
 #print(parse_phylip("example_slide4.phy"))
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
 letters = parse_phylip("example_slide4.phy", True)
 
 
+tree = nj(distance_matrix, index_to_letter_dict) 
+print_tree_to_file(tree)
+print(tree)
+tree1 = Phylo.read("tree.newick", 'newick')
+print("*****************")
+print(tree1)
 
-print(nj(distance_matrix, index_to_letter_dict))
+Phylo.draw(tree1)
 
 
 
