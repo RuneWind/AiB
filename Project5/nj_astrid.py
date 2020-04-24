@@ -75,7 +75,9 @@ def nj(dist_matrix, index_to_letter_dict):
         # Step 1 (b): Find minimum entry in matrix N
         N_removed_diag = [N[i][j] for i in S for j in S if i != j]
         min_val = min(N_removed_diag)
+        print("min val", min_val)
         min_i_j = np.where(N == min_val)[0]
+        print("********", np.where(N == min_val))
         i = int(min_i_j[0])
         j = int(min_i_j[1])
         
@@ -108,6 +110,9 @@ def nj(dist_matrix, index_to_letter_dict):
         
         # Step 5: Delete i and j from S and add new node k to S
         S_nodes.remove(leaf_1)
+        print(S_nodes)
+        print("leaf2", i)
+        print("leaf1", j)
         S_nodes.remove(leaf_2)
         S_nodes.append(k)
         S = list(range(len(S_nodes)))
@@ -137,8 +142,13 @@ def print_tree_to_file(tree):
 Code to run
 '''        
 # Read distance matrix
+'''
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
 letters = parse_phylip("example_slide4.phy", True)
+'''
+distance_matrix, index_to_letter_dict = parse_phylip("89_Adeno_E3_CR1.phy")
+letters = parse_phylip("89_Adeno_E3_CR1.phy", True)
+
 
 # Construct tree
 tree = nj(distance_matrix, index_to_letter_dict) 
