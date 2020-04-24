@@ -34,14 +34,7 @@ def parse_phylip(filename, getAlphabet = False):
     letters = list()
     for i in range(1, alph_size+1):
         letters.insert(i, f2[i][0])
-    '''
-    sub_dict = dict()
-    for i in range(len(letters)):
-        inner_dict = dict()
-        for j in range(len(letters)):
-            inner_dict[letters[j]] = f2[i+1][j+1]
-        sub_dict[letters[i]] = inner_dict
-    '''
+        
     dist_matrix = np.zeros((len(letters), len(letters)))  
     for i in range(len(letters)):
         inner_list = np.zeros(len(letters))
