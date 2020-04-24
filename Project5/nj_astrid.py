@@ -57,6 +57,7 @@ def parse_phylip(filename, getAlphabet = False):
     else:
         return dist_matrix, index_to_letter_dict
     
+    
 def get_d_and_rs(dist_matrix, S, i, j):
     d_ij = dist_matrix[i][j]
     r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
@@ -65,10 +66,8 @@ def get_d_and_rs(dist_matrix, S, i, j):
     
     
 def nj(dist_matrix, index_to_letter_dict):
-    print("D: \n", dist_matrix)
     S_nodes = list(index_to_letter_dict.values())
     S = index_to_letter_dict.keys()
-    #print(S)
     while len(S) > 3:
         
         # Step 1 (a): Compute matrix N
@@ -79,7 +78,6 @@ def nj(dist_matrix, index_to_letter_dict):
             for j in range(len(inner_list)):
                 d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
                 N[i][j] = d_ij - (r_i + r_j)
-        print("N: \n", N)
         
         # Step 1 (b): Find minimum entry in matrix N
         N_removed_diag = [N[i][j] for i in S for j in S if i != j]
@@ -87,7 +85,6 @@ def nj(dist_matrix, index_to_letter_dict):
         min_i_j = np.where(N == min_val)[0]
         i = int(min_i_j[0])
         j = int(min_i_j[1])
-        print("Min value i and j: \n", i, ",",  j)
         
         # Step 2 and 3: Add new node k to the tree with weights
         d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
@@ -96,7 +93,6 @@ def nj(dist_matrix, index_to_letter_dict):
         leaf_1 = S_nodes[i]
         leaf_2 = S_nodes[j]
         k = "(" + leaf_1 + ":" + str(round(weight_ki, 3)) + ", " + leaf_2 + ":" + str(round(weight_kj, 3)) + ")"
-        print("New node k: \n", k)
         
         
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
@@ -116,27 +112,21 @@ def nj(dist_matrix, index_to_letter_dict):
         # Insert row and column for new node k
         dist_matrix = np.row_stack((dist_matrix, row))
         dist_matrix = np.column_stack((dist_matrix, np.append(row, 0)))
-        print("New dist matrix: \n", dist_matrix)
         
         # Step 5: Delete i and j from S and add new node k to S
         S_nodes.remove(leaf_1)
         S_nodes.remove(leaf_2)
         S_nodes.append(k)
         S = list(range(len(S_nodes)))
-        print("S_nodes*********\n", S_nodes)
+        
     # We now have 3 leaves left: i, j and m
     # Add a new node v to the tree with weights
-    print("dist_matrix***\n")
-    print(dist_matrix)
     i = S[0]
     j = S[1]
     m = S[2]
     weight_vi = (1/2) * (dist_matrix[i][j] + dist_matrix[i][m] - dist_matrix[j][m])        
     weight_vj = (1/2) * (dist_matrix[i][j] + dist_matrix[j][m] - dist_matrix[i][m])        
-    weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])    
-    print("weight_vi", weight_vi)    
-    print("weight_vj", weight_vj)    
-    print("weight_vm", weight_vm)    
+    weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])       
 
     v = "(" + S_nodes[i] + ":" + str(round(weight_vi, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_vj, 3)) + ", " + S_nodes[m] + ":" + str(round(weight_vm, 3)) + ")" 
 
@@ -147,20 +137,23 @@ def print_tree_to_file(tree):
     x = open("tree.newick", "w")
     x.write(tree)
     x.close()
-        
-#print(parse_phylip("example_slide4.phy"))
+
+
+
+'''
+Code to run
+'''        
+# Read distance matrix
 distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
 letters = parse_phylip("example_slide4.phy", True)
 
-
+# Construct tree
 tree = nj(distance_matrix, index_to_letter_dict) 
 print_tree_to_file(tree)
-print(tree)
-tree1 = Phylo.read("tree.newick", 'newick')
-print("*****************")
-print(tree1)
 
-Phylo.draw(tree1)
+# Draw tree
+tree1 = Phylo.read("tree.newick", 'newick')
+Phylo.draw(tree1, branch_labels=lambda c: c.branch_length)
 
 
 
