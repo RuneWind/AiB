@@ -105,6 +105,13 @@ def nj(dist_matrix, index_to_letter_dict):
         S = list(range(len(S_nodes)))
         
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
+        row = []
+        for m in range(len(dist_matrix)):
+            if(m != i and m != j):
+                d_km = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - d_ij)
+                print("DKM:", d_km)
+                row.append(d_km)
+        row.append(0)
         
         
         
