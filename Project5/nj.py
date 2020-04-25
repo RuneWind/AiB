@@ -24,7 +24,8 @@ Returning a dictionary of this format (if getAlphabet = False):
 If getAlphabet = True, we instead return a list of the node names:
 ['A', 'B', 'C', 'D', 'E']
 """
-def parse_phylip(filename, getAlphabet = False):
+def parse_phylip_to_matrix_and_letters(filename):
+    # Read file
     f= open(filename, "r")    
     f1 = f.readlines()
     f2 = list()
@@ -32,24 +33,20 @@ def parse_phylip(filename, getAlphabet = False):
         f2.append(x.split())
     alph_size = int(f2[0][0])
     
+    # Letters
     letters = list()
     for i in range(1, alph_size+1):
         letters.insert(i, f2[i][0])
         
+    # Distance matrix
     dist_matrix = np.zeros((len(letters), len(letters)))  
     for i in range(len(letters)):
         inner_list = np.zeros(len(letters))
         for j in range(len(letters)):
             inner_list[j] = f2[i+1][j+1]
         dist_matrix[i] = inner_list
-    
-    index_to_letter_dict = dict()
-    for i in range(len(letters)):
-        index_to_letter_dict[i] = letters[i]
-    if(getAlphabet):
-        return letters
-    else:
-        return dist_matrix, index_to_letter_dict
+        
+    return dist_matrix, letters
 
 
 def print_tree_to_file(tree):
@@ -65,11 +62,14 @@ def get_d_and_rs(dist_matrix, S, i, j):
     return d_ij, r_i, r_j
     
     
-def nj(dist_matrix, index_to_letter_dict):
-    S_nodes = list(index_to_letter_dict.values())
-    S = index_to_letter_dict.keys()
+def nj(dist_matrix, letters):
+    # We have a list of nodes "S", in each iteration of the algorithm
+   # S_nodes are the actual names of our nodes and S is the corresponding indices in dist_matrix
+    S_nodes = letters
+    S = list(range(len(letters)))
+    
+    # While we have more than 3 nodes left in S
     while len(S) > 3:
-        
         # Step 1 (a): Compute matrix N
         # Matrix N entry (i,j) is a number indicating "how cloase i and j are to each other and how far they are from the rest"
         N = np.zeros((len(S), len(S)))
@@ -100,9 +100,7 @@ def nj(dist_matrix, index_to_letter_dict):
         leaf_2 = S_nodes[j]
         k = "(" + leaf_1 + ":" + str(round(weight_ki, 3)) + ", " + leaf_2 + ":" + str(round(weight_kj, 3)) + ")"
         
-        
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
-        
         # Create row for new node k to insert
         row = []
         for m in range(len(dist_matrix)):
@@ -135,7 +133,6 @@ def nj(dist_matrix, index_to_letter_dict):
     weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])       
 
     v = "(" + S_nodes[i] + ":" + str(round(weight_vi, 3)) + ", " + S_nodes[j] + ":" + str(round(weight_vj, 3)) + ", " + S_nodes[m] + ":" + str(round(weight_vm, 3)) + ");" 
-    
     return v
 
 
@@ -145,20 +142,17 @@ Code to run
 '''        
 # Read distance matrix
 '''
-distance_matrix, index_to_letter_dict = parse_phylip("example_slide4.phy")
-letters = parse_phylip("example_slide4.phy", True)
+distance_matrix, letters = parse_phylip_to_matrix_and_letters("example_slide4.phy")
 '''
-distance_matrix, index_to_letter_dict = parse_phylip("89_Adeno_E3_CR1.phy")
-letters = parse_phylip("89_Adeno_E3_CR1.phy", True)
+distance_matrix, letters = parse_phylip_to_matrix_and_letters("89_Adeno_E3_CR1.phy")
 
-
-# Construct tree
-tree = nj(distance_matrix, index_to_letter_dict) 
+# Construct tree and it print to file
+tree = nj(distance_matrix, letters) 
 print_tree_to_file(tree)
 
 # Draw tree
 tree1 = Phylo.read("tree.newick", 'newick')
-#Phylo.draw(tree1, branch_labels=lambda c: c.branch_length)
+Phylo.draw(tree1, branch_labels=lambda c: c.branch_length)
 
 
 
