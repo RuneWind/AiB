@@ -60,7 +60,12 @@ def get_d_and_rs(dist_matrix, S, i, j):
     r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
     r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
     return d_ij, r_i, r_j
-    
+
+def get_score(dist_matrix, S, i, j):
+    d_ij = dist_matrix[i][j]
+    r_i = 1/(len(S)-2) * sum([dist_matrix[i][m] for m in S])
+    r_j = 1/(len(S)-2) * sum([dist_matrix[j][m] for m in S])
+    return d_ij - (r_i + r_j)    
     
 def nj(dist_matrix, letters):
     # We have a list of nodes "S", in each iteration of the algorithm
@@ -72,12 +77,15 @@ def nj(dist_matrix, letters):
     while len(S) > 3:
         # Step 1 (a): Compute matrix N
         # Matrix N entry (i,j) is a number indicating "how cloase i and j are to each other and how far they are from the rest"
+        '''
         N = np.zeros((len(S), len(S)))
         for i in range(len(S)):
             inner_list = dist_matrix[i]
             for j in range(len(inner_list)):
                 d_ij, r_i, r_j = get_d_and_rs(dist_matrix, S, i, j)
                 N[i][j] = d_ij - (r_i + r_j)
+        '''
+        N = [[get_score(dist_matrix, S, i, j) for j in range(len(dist_matrix[i]))] for i in range(len(S))]
         
         # Step 1 (b): Find minimum entry in matrix N
         N_removed_diag = [N[i][j] for i in S for j in S if i != j]
