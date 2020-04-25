@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from Bio import Phylo
 
@@ -144,15 +145,11 @@ def nj(dist_matrix, letters):
     return v
 
 
-
 '''
 Code to run
-'''        
+'''
 # Read distance matrix
-'''
-distance_matrix, letters = parse_phylip_to_matrix_and_letters("example_slide4.phy")
-'''
-distance_matrix, letters = parse_phylip_to_matrix_and_letters("89_Adeno_E3_CR1.phy")
+distance_matrix, letters = parse_phylip_to_matrix_and_letters(sys.argv[1])
 
 # Construct tree and it print to file
 tree = nj(distance_matrix, letters) 
@@ -163,6 +160,25 @@ tree1 = Phylo.read("tree.newick", 'newick')
 Phylo.draw(tree1, branch_labels=lambda c: c.branch_length)
 
 
+'''
+Test code
+'''
+        
+
+'''
+# Read distance matrix
+distance_matrix, letters = parse_phylip_to_matrix_and_letters("example_slide4.phy")
+
+distance_matrix, letters = parse_phylip_to_matrix_and_letters("89_Adeno_E3_CR1.phy")
+
+# Construct tree and it print to file
+tree = nj(distance_matrix, letters) 
+print_tree_to_file(tree)
+
+# Draw tree
+tree1 = Phylo.read("tree.newick", 'newick')
+Phylo.draw(tree1, branch_labels=lambda c: c.branch_length)
+'''
 
 
 
