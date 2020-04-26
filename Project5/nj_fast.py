@@ -82,7 +82,6 @@ def nj(dist_matrix, letters):
         # N is symmetric, so we only fill out upper triangle (without diagonal, since we do not use it)
         # Fill out upper triangle in N matrix (rest is set to 0)
         N = [[dist_matrix[i][j] - (row_sum_list[i] + row_sum_list[j]) if j > i else 0 for j in S] for i in S] 
-        N = np.array(N)
         
         # Step 1 (b): Find minimum entry in matrix N
         N_upper = [N[i][j] for i in S for j in S if j > i] # only check upper triangle in N
