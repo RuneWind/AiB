@@ -67,23 +67,24 @@ Returns a tree in newick format constructed from the input distance matrix
 '''    
 def nj(dist_matrix, letters):
     # We have a list of nodes "S", in each iteration of the algorithm
-   # S_nodes are the actual names of our nodes and S is the corresponding indices in dist_matrix
+   # S_nodes are the actual names of our leaves and S is the corresponding indices in dist_matrix
     S_nodes = letters
     S = list(range(len(letters)))
     
     # While we have more than 3 nodes left in S
     while len(S) > 3:
+        
         # Step 1 (a): Compute matrix N
-        # Matrix N entry (i,j) is a number indicating "how cloase i and j are to each other and how far they are from the rest"
         
         # Create list of row sums, i.e. r_i's, which we use to look up in
         row_sum_list = [1/(len(S)-2) * sum(dist_matrix[i][:]) for i in S]
-        
+
+        # Matrix N entry (i,j) is a number indicating "how cloase i and j are to each other and how far they are from the rest"        
         # N is symmetric, so we only fill out upper triangle (without diagonal, since we do not use it)
         # Fill out upper triangle in N matrix (rest is set to 0)
         N = [[dist_matrix[i][j] - (row_sum_list[i] + row_sum_list[j]) if j > i else 0 for j in S] for i in S] 
         
-        # Step 1 (b): Find minimum entry in matrix N
+        # Step 1 (b): Find minimum entry in matrix N and its indices (i, j)
         N_upper = [N[i][j] for i in S for j in S if j > i] # only check upper triangle in N
         min_val = min(N_upper)
         min_i_j = np.where(N == min_val)
@@ -96,21 +97,23 @@ def nj(dist_matrix, letters):
         i = int(min_coord[0])
         j = int(min_coord[1])
         
+        
         # Step 2 and 3: Add new node k to the tree with weights
+        
+        # Calculate weights and find leaf names
         weight_ki = (1/2) * (dist_matrix[i][j] + row_sum_list[i] - row_sum_list[j])
         weight_kj = (1/2) * (dist_matrix[i][j] + row_sum_list[j] - row_sum_list[i]) 
         leaf_1 = S_nodes[i]
         leaf_2 = S_nodes[j]
+        
         # Create Newick formatted node
         k = "(" + leaf_1 + ":" + str(round(weight_ki, 3)) + ", " + leaf_2 + ":" + str(round(weight_kj, 3)) + ")"
         
+        
         # Step 4: Update dist_matrix (delete rows i and j and columns i and j and add new row and column for node k)
+        
         # Create row for new node k to insert
-        row = []
-        for m in S:
-            if(m != i and m != j):
-                d_km = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])
-                row.append(d_km)        
+        row = [(1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j]) for m in S if m != i and m != j]
         
         # Remove row i and j
         dist_matrix = np.delete(dist_matrix, [i,j], 0)        
@@ -121,6 +124,7 @@ def nj(dist_matrix, letters):
         dist_matrix = np.row_stack((dist_matrix, row))
         dist_matrix = np.column_stack((dist_matrix, np.append(row, 0)))
         
+        
         # Step 5: Delete i and j from S and add new node k to S
         S_nodes.remove(leaf_1)
         S_nodes.remove(leaf_2)
@@ -129,9 +133,7 @@ def nj(dist_matrix, letters):
         
     # Termination: We now have 3 leaves left: i, j and m
     # Add a new node v to the tree with weights
-    i = S[0]
-    j = S[1]
-    m = S[2]
+    i, j, m = S[0], S[1], S[2]
     weight_vi = (1/2) * (dist_matrix[i][j] + dist_matrix[i][m] - dist_matrix[j][m])        
     weight_vj = (1/2) * (dist_matrix[i][j] + dist_matrix[j][m] - dist_matrix[i][m])        
     weight_vm = (1/2) * (dist_matrix[i][m] + dist_matrix[j][m] - dist_matrix[i][j])       
@@ -159,8 +161,6 @@ print_tree_to_file(tree)
 '''
 Test code
 '''
-        
-
 '''
 # Read distance matrix
 distance_matrix, letters = parse_phylip_to_matrix_and_letters("example_slide4.phy")
