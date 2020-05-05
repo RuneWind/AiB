@@ -39,12 +39,12 @@ def calculate_matches(hp_str):
 	if even_odd_score > odd_even_score:
 		return zip(even_s[0: even_odd_score], odd_s_rev[0: even_odd_score])
 
-	if even_odd_score < odd_even_score:
+	if even_odd_score <= odd_even_score:
 		return list(zip(odd_s[0: odd_even_score], even_s_rev[0: odd_even_score]))
 
 
-#def calculate_free_energy():
-
+def calculate_free_energy(match_indecies):
+	
 
 
 
@@ -54,5 +54,10 @@ def calculate_matches(hp_str):
 
 
 hp_str = "hhhhhhhhhhhhphphpphhpphhpphpphhpphhpphpphhpphhpphphphhhhhhhhhhhh"
-print(calculate_matches(hp_str))
+match_indecies  = calculate_matches(hp_str)
+
+calculate_free_energy(match_indecies)
+
+
+
 
