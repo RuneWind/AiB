@@ -1,3 +1,4 @@
+import os
 
 def calculate_matches(hp_str):
 
@@ -19,12 +20,16 @@ def calculate_matches(hp_str):
     while even_s[i] < odd_s_rev[i]:
         even_odd_score += 1
         i += 1
+        if i >= min(len(odd_s_rev), len(even_s)):
+        	break
 
 	# Match odds from left with evens from right, i.e. match odds with reverse evens
     i = 0
     while odd_s[i] < even_s_rev[i]:
         odd_even_score += 1
         i += 1
+        if i >= min(len(odd_s), len(even_s_rev)):
+        	break
         
     # Return tuples of matchings in list from the largest number of matchings
     if even_odd_score > odd_even_score:
@@ -34,45 +39,80 @@ def calculate_matches(hp_str):
         return list(zip(odd_s[0: odd_even_score], even_s_rev[0: odd_even_score]))
 
 
-def calculate_free_energy(match_indecies, hp_str):
+def create_fold_string(match_indecies, hp_str):
+	free_energy = 0
 	fold_str = ""
+
+	# Add e's corresponding to bases before first match
 	fold_str += match_indecies[0][0] * "e"
 
+	# Make left to right portion of fold string
 	for i in range(0, len(match_indecies)-1):
+		# In case of loop
 		if match_indecies[i+1][0] - match_indecies[i][0] > 2:
 			fold_str += "n" * ((match_indecies[i+1][0] - match_indecies[i][0] - 1) // 2)
 			fold_str += "e"
 			fold_str += "s" * ((match_indecies[i+1][0] - match_indecies[i][0] - 1) // 2)
 			fold_str += "e"
+			if hp_str[match_indecies[i+1][0]-1] == "h":
+				free_energy += 1
+				if hp_str[match_indecies[i][1]-1] == "h":
+					free_energy += 1
+			free_energy += 1
 
+
+		# In case of base pairs
 		else:
 			fold_str += 2 * "e"
-	fold_str += ((match_indecies[len(match_indecies)-1][1] - match_indecies[len(match_indecies)-1][0] - 1) // 2) * "e"
+			if hp_str[match_indecies[i][0]+1] == "h" and hp_str[match_indecies[i][1]-1] == "h":
+				free_energy += 1
+			free_energy += 1
 
+	tail_length = ((match_indecies[len(match_indecies)-1][1] - match_indecies[len(match_indecies)-1][0] - 1) // 2)
+
+	for i in range(tail_length):
+		upper = hp_str[match_indecies[len(match_indecies)-1][0] + i]
+		lower = hp_str[match_indecies[len(match_indecies)-1][1] - i]
+		if upper == "h" and lower == "h":
+			free_energy += 1
+
+	# Add tail of structure to fold string
+	fold_str += tail_length * "e"
 	fold_str += "s"
-	fold_str += ((match_indecies[len(match_indecies)-1][1] - match_indecies[len(match_indecies)-1][0] - 1) // 2) * "w"
+	fold_str += tail_length * "w"
 
+
+	# Make right to left portion of fold string
 	for i in range(len(match_indecies)-1, 0, -1):
+		# in case of loop
 		if match_indecies[i-1][1] - match_indecies[i][1] > 2:
 			fold_str += "s" * ((match_indecies[i][0] - match_indecies[i-1][0] - 1) // 2)
 			fold_str += "w"
 			fold_str += "n" * ((match_indecies[i][0] - match_indecies[i-1][0] - 1) // 2)
 			fold_str += "w"
+			if hp_str[match_indecies[i-1][1]-1] == "h":
+				free_energy += 1
 
+		# In case of base pairs
 		else:
 			fold_str += 2 * "w"
 
 	fold_str += (len(hp_str) - match_indecies[0][1] - 1) * "w"
+	print(free_energy)
 	
-	print(fold_str)
+	return fold_str
 
 
 
-hp_str = "hhhhhhhhhhhhphphpphhpphhpphpphhpphhpphpphhpphhpphphphhhhhhhhhhhh"
+hp_str = "hhppppphhppphppphp"
 match_indecies  = calculate_matches(hp_str)
 #print(match_indecies)
-calculate_free_energy(match_indecies, hp_str)
+fold_string = create_fold_string(match_indecies, hp_str)
 
+print(len(hp_str), len(fold_string))
+print(match_indecies)
+print(fold_string)
 
+os.system("python hpview3k.py " + hp_str + " " + fold_string )
 
 
