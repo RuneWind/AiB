@@ -1,4 +1,5 @@
 import os
+import time
 
 def calculate_matches(hp_str):
 
@@ -104,20 +105,28 @@ def create_fold_string(match_indecies, hp_str):
 			fold_str += 2 * "w"
 
 	fold_str += (len(hp_str) - match_indecies[0][1] - 1) * "w"
-	print(free_energy)
 	
-	return fold_str
+	return fold_str, -free_energy
 
 
 
 
-hp_strs = ["hhppppphhppphppphp", "hphphhhppphhhhpphh", "phpphphhhphhphhhhh", "hphpphhphpphphhpphph", "hhhpphphphpphphphpph", "hhpphpphpphpphpphpphpphh", "pphpphhpppphhpppphhpppphh", "ppphhpphhppppphhhhhhhpphhpppphhpphpp", "pphpphhpphhppppphhhhhhhhhhpppppphhpphhpphpphhhhh", "hhphphphphhhhphppphppphpppphppphppphphhhhphphphphh", "pphhhphhhhhhhhppphhhhhhhhhhphppphhhhhhhhhhhhpppphhhhhhphhphp", "hhhhhhhhhhhhphphpphhpphhpphpphhpphhpphpphhpphhpphphphhhhhhhhhhhh", "hhhhpppphhhhhhhhhhhhpppppphhhhhhhhhhhhppphhhhhhhhhhhhppphhhhhhhhhhhhppphpphhpphhpphph", "pppppphphhppppphhhphhhhhphhpppphhpphhphhhhhphhhhhhhhhhphhphhhhhhhppppppppppphhhhhhhpphphhhpppppphphh", "ppphhpphhhhpphhhphhphhphhhhpppppppphhhhhhpphhhhhhppppppppphphhphhhhhhhhhhhpphhhphhphpphphhhpppppphhh"]
-for seq in hp_strs:
-	print("\n\n", seq)
-	match_indecies = calculate_matches(seq)
-	print(match_indecies)
-	fold_string = create_fold_string(match_indecies, seq)
-	os.system("python hpview3k.py " + seq + " " + fold_string )
+# Measure running time of implementation
+for i in range(5):
+	running_times = []
+	lens = []
+	
+	hp_strs = ["hhppppphhppphppphp", "hphphhhppphhhhpphh", "phpphphhhphhphhhhh", "hphpphhphpphphhpphph", "hhhpphphphpphphphpph", "hhpphpphpphpphpphpphpphh", "pphpphhpppphhpppphhpppphh", "ppphhpphhppppphhhhhhhpphhpppphhpphpp", "pphpphhpphhppppphhhhhhhhhhpppppphhpphhpphpphhhhh", "hhphphphphhhhphppphppphpppphppphppphphhhhphphphphh", "pphhhphhhhhhhhppphhhhhhhhhhphppphhhhhhhhhhhhpppphhhhhhphhphp", "hhhhhhhhhhhhphphpphhpphhpphpphhpphhpphpphhpphhpphphphhhhhhhhhhhh", "hhhhpppphhhhhhhhhhhhpppppphhhhhhhhhhhhppphhhhhhhhhhhhppphhhhhhhhhhhhppphpphhpphhpphph", "pppppphphhppppphhhphhhhhphhpppphhpphhphhhhhphhhhhhhhhhphhphhhhhhhppppppppppphhhhhhhpphphhhpppppphphh", "ppphhpphhhhpphhhphhphhphhhhpppppppphhhhhhpphhhhhhppppppppphphhphhhhhhhhhhhpphhhphhphpphphhhpppppphhh"]
+	for i in range(len(hp_strs)):
+		t_start = time.time()
+		match_indecies = calculate_matches(hp_strs[i])
+		fold_string = create_fold_string(match_indecies, hp_strs[i])[0]
+		t_end = time.time()
+		running_times.append(t_end - t_start)
+		lens.append(len(hp_strs[i]))
+	
+	print(running_times)
+print(lens)
 	
 
 #match_indecies  = calculate_matches(hp_str)
